@@ -77,6 +77,12 @@ export function getUserBooks(
 		params.push(options.statusCategory);
 	}
 
+	if (options.search) {
+		sql += ' AND (b.original_title LIKE ? OR a.name LIKE ?)';
+		const pattern = `%${options.search}%`;
+		params.push(pattern, pattern);
+	}
+
 	sql += ' GROUP BY ub.id ORDER BY ub.updated_at DESC';
 
 	if (options.limit) {
