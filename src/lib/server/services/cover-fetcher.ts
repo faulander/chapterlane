@@ -20,6 +20,7 @@ export function getBooksWithoutCovers(userId: string, limit: number = 50): BookW
 			LEFT JOIN authors a ON a.id = ba.author_id
 			WHERE ub.user_id = ? AND b.cover_url IS NULL
 			GROUP BY b.id
+			ORDER BY ub.updated_at DESC
 			LIMIT ?`
 		)
 		.all(userId, limit) as BookWithoutCover[];

@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Plus, Image, Search, ChevronLeft, ChevronRight } from 'svelte-lucide';
+	import { Plus, Image, Search, ChevronLeft, ChevronRight, LoaderCircle } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import BookCard from '$lib/components/books/BookCard.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 
 	let { data, form } = $props();
+	let fetchingCovers = $state(false);
 
 	const tabs = $derived([
 		{ key: 'all', label: m.status_all(), count: data.counts.all },
@@ -36,9 +37,23 @@
 	<div class="flex flex-wrap items-center justify-between gap-2">
 		<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.my_books_title()}</h1>
 		<div class="flex gap-2">
-			<form method="POST" action="?/fetchCovers" use:enhance>
-				<Button type="submit" size="sm" variant="secondary">
-					<Image size="16" class="mr-1" />{m.import_fetch_covers()}
+			<form
+				method="POST"
+				action="?/fetchCovers"
+				use:enhance={() => {
+					fetchingCovers = true;
+					return async ({ update }) => {
+						fetchingCovers = false;
+						await update();
+					};
+				}}
+			>
+				<Button type="submit" size="sm" variant="secondary" disabled={fetchingCovers}>
+					{#if fetchingCovers}
+						<LoaderCircle size="16" class="mr-1 animate-spin" />{m.common_loading()}
+					{:else}
+						<Image size="16" class="mr-1" />{m.import_fetch_covers()}
+					{/if}
 				</Button>
 			</form>
 			<a href={href('/books/add')}>
