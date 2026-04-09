@@ -5,6 +5,16 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-04-09
+
+### Added
+
+- Statistics DB module with queries for books/pages by month, language, status, reading place, top authors
+- Statistics page with Chart.js bar/doughnut charts and year selector
+- ChartCanvas Svelte wrapper for Chart.js with reactive data
+- StatCard component for key metrics display
+- i18n messages for statistics (en + de)
+
 ## [0.8.0] - 2026-04-09
 
 ### Added

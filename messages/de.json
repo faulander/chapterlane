@@ -147,5 +147,12 @@
 	"list_create": "Liste erstellen",
 	"list_title_label": "Titel",
 	"list_description_label": "Beschreibung",
-	"lists_empty": "Noch keine Listen."
+	"lists_empty": "Noch keine Listen.",
+	"stats_books_completed": "Abgeschlossene Bücher",
+	"stats_pages_read": "Gelesene Seiten",
+	"stats_by_language": "Nach Sprache",
+	"stats_top_authors": "Top-Autoren",
+	"stats_avg_pages": "Ø Seiten/Buch",
+	"stats_active_reads": "Aktuell am Lesen",
+	"stats_total_books": "Gesamte Bücher"
 }
