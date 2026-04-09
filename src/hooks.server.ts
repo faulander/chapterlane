@@ -3,6 +3,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { validateSession } from '$lib/server/services/auth-service';
+import { triggerCoverFetch } from '$lib/server/services/cover-fetcher';
 import { createLogger } from '$lib/server/utils/logger';
 
 const log = createLogger('hooks');
@@ -44,3 +45,6 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 	});
 
 export const handle: Handle = sequence(handleParaglide, handleAuth);
+
+// Fetch covers for any books missing them on startup
+triggerCoverFetch();
