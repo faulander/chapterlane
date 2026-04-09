@@ -135,29 +135,28 @@ async function runLoop(): Promise<void> {
 
 	try {
 		let totalFetched = 0;
-		let consecutiveRateLimits = 0;
-		const maxRateLimits = 3; // Stop after 3 consecutive rate limits
+		let rateLimitCount = 0;
 
-		while (true) {
+		// Google Books API: 1000/day, 100/min
+		// With 1.5s delay we do ~40 req/min, well under 100/min
+		// Stop at 900 requests to stay under daily limit
+		let requestCount = 0;
+		const MAX_DAILY_REQUESTS = 900;
+
+		while (requestCount < MAX_DAILY_REQUESTS) {
 			const { fetched, rateLimited } = await processBatch();
 			totalFetched += fetched;
+			requestCount += BATCH_SIZE; // approximate
 
 			if (rateLimited) {
-				consecutiveRateLimits++;
-				if (consecutiveRateLimits >= maxRateLimits) {
-					log.info('Rate limited too many times, pausing until next restart', {
-						totalFetched,
-						consecutiveRateLimits
-					});
-					break;
-				}
-				// Back off 5 minutes on rate limit
-				log.info('Rate limited, waiting 5 minutes', { totalFetched, consecutiveRateLimits });
-				await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
+				rateLimitCount++;
+				// Per-minute limit hit -- wait 90 seconds
+				log.info('Rate limited, waiting 90s', { totalFetched, rateLimitCount, requestCount });
+				await new Promise((resolve) => setTimeout(resolve, 90 * 1000));
 				continue;
 			}
 
-			consecutiveRateLimits = 0;
+			rateLimitCount = 0;
 
 			const remaining = getAllBooksWithoutCovers(1);
 			if (remaining.length === 0) break;
@@ -170,7 +169,11 @@ async function runLoop(): Promise<void> {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 		}
 
-		log.info('Background cover fetch complete', { totalFetched });
+		if (requestCount >= MAX_DAILY_REQUESTS) {
+			log.info('Daily request limit reached, stopping', { totalFetched, requestCount });
+		} else {
+			log.info('Background cover fetch complete', { totalFetched, requestCount });
+		}
 	} catch (e) {
 		log.error('Background cover fetch error', { error: String(e) });
 	} finally {
