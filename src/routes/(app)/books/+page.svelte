@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Plus } from 'svelte-lucide';
+	import { enhance } from '$app/forms';
+	import { Plus, Image } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import BookCard from '$lib/components/books/BookCard.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	const tabs = $derived([
 		{ key: 'all', label: m.status_all(), count: data.counts.all },
@@ -24,10 +25,25 @@
 <div class="space-y-6">
 	<div class="flex items-center justify-between">
 		<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.my_books_title()}</h1>
-		<a href={href('/books/add')}>
-			<Button size="sm"><Plus size="16" class="mr-1" /> {m.book_add_heading()}</Button>
-		</a>
+		<div class="flex gap-2">
+			<form method="POST" action="?/fetchCovers" use:enhance>
+				<Button type="submit" size="sm" variant="secondary">
+					<Image size="16" class="mr-1" />{m.import_fetch_covers()}
+				</Button>
+			</form>
+			<a href={href('/books/add')}>
+				<Button size="sm"><Plus size="16" class="mr-1" /> {m.book_add_heading()}</Button>
+			</a>
+		</div>
 	</div>
+
+	{#if form?.coversFetched !== undefined}
+		<div
+			class="rounded-lg bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400"
+		>
+			{m.import_covers_fetched({ count: String(form.coversFetched) })}
+		</div>
+	{/if}
 
 	<div class="flex gap-1 overflow-x-auto pb-2">
 		{#each tabs as tab (tab.key)}

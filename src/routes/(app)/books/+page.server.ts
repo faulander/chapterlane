@@ -1,5 +1,6 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { getUserBooks, getUserBookCount } from '$lib/server/db/library';
+import { fetchCoversForUser } from '$lib/server/services/cover-fetcher';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const user = locals.user!;
@@ -16,4 +17,11 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	};
 
 	return { books, counts, currentFilter: statusCategory || 'all' };
+};
+
+export const actions: Actions = {
+	fetchCovers: async ({ locals }) => {
+		const fetched = await fetchCoversForUser(locals.user!.id);
+		return { coversFetched: fetched };
+	}
 };

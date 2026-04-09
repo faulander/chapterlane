@@ -164,5 +164,7 @@
 	"privacy_profile_visibility": "Profil-Sichtbarkeit",
 	"language_select": "Bevorzugte Sprache",
 	"language_en": "English",
-	"language_de": "Deutsch"
+	"language_de": "Deutsch",
+	"import_fetch_covers": "Cover laden",
+	"import_covers_fetched": "{count} Cover von Google Books geladen"
 }
