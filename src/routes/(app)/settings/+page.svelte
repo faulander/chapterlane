@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { User, Shield, Globe, BookMarked, Tag } from 'svelte-lucide';
+	import { User, Shield, Globe, BookMarked, Tag, Upload } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 
@@ -8,7 +8,8 @@
 		{ href: '/settings/privacy', icon: Shield, label: m.settings_privacy() },
 		{ href: '/settings/language', icon: Globe, label: m.settings_language() },
 		{ href: '/settings/statuses', icon: Tag, label: m.settings_statuses_title() },
-		{ href: '/settings/reading-places', icon: BookMarked, label: m.reading_places_title() }
+		{ href: '/settings/reading-places', icon: BookMarked, label: m.reading_places_title() },
+		{ href: '/import', icon: Upload, label: m.import_title() }
 	];
 </script>
 
