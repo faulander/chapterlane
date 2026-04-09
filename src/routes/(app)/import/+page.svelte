@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { Upload } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
@@ -20,7 +19,6 @@
 		method="POST"
 		action="?/upload"
 		enctype="multipart/form-data"
-		use:enhance
 		class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
 	>
 		<FormError message={form?.error} />
