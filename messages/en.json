@@ -154,5 +154,15 @@
 	"stats_top_authors": "Top Authors",
 	"stats_avg_pages": "Avg Pages/Book",
 	"stats_active_reads": "Currently Reading",
-	"stats_total_books": "Total Books"
+	"stats_total_books": "Total Books",
+	"settings_profile": "Profile",
+	"settings_privacy": "Privacy",
+	"settings_language": "Language",
+	"profile_display_name": "Display Name",
+	"profile_bio": "Bio",
+	"profile_avatar": "Avatar URL",
+	"privacy_profile_visibility": "Profile Visibility",
+	"language_select": "Preferred Language",
+	"language_en": "English",
+	"language_de": "Deutsch"
 }

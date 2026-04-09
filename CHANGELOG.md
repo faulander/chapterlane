@@ -5,6 +5,17 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.0] - 2026-04-09
+
+### Added
+
+- Settings hub page with links to all settings sections
+- Profile settings: edit display name, bio, avatar URL
+- Privacy settings: profile visibility (public/friends/private)
+- Language settings: preferred language selection (persisted to DB)
+- i18n messages for settings, profile, privacy, language (en + de)
+- Fixed root layout to use navigation helper for Paraglide compatibility
+
 ## [0.9.0] - 2026-04-09
 
 ### Added

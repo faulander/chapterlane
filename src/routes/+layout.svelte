@@ -1,8 +1,7 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
-	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { locales } from '$lib/paraglide/runtime';
+	import { href } from '$lib/utils/navigation';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 
@@ -14,6 +13,6 @@
 
 <div style="display:none">
 	{#each locales as locale (locale)}
-		<a href={resolve(localizeHref(page.url.pathname, { locale }) as Pathname)}>{locale}</a>
+		<a href={href(page.url.pathname, { locale })} data-sveltekit-reload>{locale}</a>
 	{/each}
 </div>
