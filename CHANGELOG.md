@@ -5,6 +5,20 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-04-09
+
+### Added
+
+- Shelves migration: shelves and shelf_books tables
+- Shelves DB module with full CRUD and book count queries
+- Library browsing page with status filter tabs (All/Planned/Active/Paused/Completed/Dropped)
+- BookCard and StatusBadge UI components
+- Book detail page: status selector, date fields, shelf management (add/remove)
+- Shelves list page with create/delete and book counts
+- Shelf detail page with book grid and remove actions
+- Custom status management page (create/delete, system categories)
+- i18n messages for library, shelves, statuses, and visibility in English and German
+
 ## [0.2.1] - 2026-04-09
 
 ### Fixed
