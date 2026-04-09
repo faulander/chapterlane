@@ -173,6 +173,141 @@
 		</div>
 	{/if}
 
+	<!-- Progress section (only for active books) -->
+	{#if data.userBook}
+		{@const currentStatus = data.statuses.find((s) => s.id === data.userBook?.current_status_id)}
+		{#if currentStatus?.system_category === 'active'}
+			<div
+				class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
+			>
+				<h2 class="text-lg font-semibold text-gray-900 dark:text-white">{m.progress_title()}</h2>
+
+				<!-- Total pages -->
+				<form method="POST" action="?/updateTotalPages" use:enhance class="flex items-end gap-2">
+					<div class="space-y-1">
+						<label for="total_pages" class="text-xs text-gray-500 dark:text-gray-400"
+							>{m.progress_total_pages()}</label
+						>
+						<input
+							id="total_pages"
+							name="total_pages"
+							type="number"
+							min="1"
+							value={data.userBook.user_total_pages ?? ''}
+							class="min-h-[36px] w-24 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+						/>
+					</div>
+					<Button type="submit" size="sm" variant="secondary">{m.common_save()}</Button>
+				</form>
+
+				<!-- Progress bar -->
+				{#if data.userBook.current_percent !== null}
+					<div class="space-y-1">
+						<div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+							<span
+								>{data.userBook.current_page !== null
+									? `p. ${data.userBook.current_page}`
+									: ''}</span
+							>
+							<span>{Math.round(data.userBook.current_percent)}%</span>
+						</div>
+						<div class="h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+							<div
+								class="h-full rounded-full bg-indigo-500"
+								style="width: {Math.min(data.userBook.current_percent, 100)}%"
+							></div>
+						</div>
+					</div>
+				{/if}
+
+				<!-- Log progress form -->
+				<form
+					method="POST"
+					action="?/logProgress"
+					use:enhance
+					class="flex flex-wrap items-end gap-2"
+				>
+					<div class="space-y-1">
+						<label for="page" class="text-xs text-gray-500 dark:text-gray-400"
+							>{m.progress_current_page()}</label
+						>
+						<input
+							id="page"
+							name="page"
+							type="number"
+							min="0"
+							class="min-h-[36px] w-20 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+						/>
+					</div>
+					<div class="space-y-1">
+						<label for="percent" class="text-xs text-gray-500 dark:text-gray-400"
+							>{m.progress_percent()}</label
+						>
+						<input
+							id="percent"
+							name="percent"
+							type="number"
+							min="0"
+							max="100"
+							step="0.1"
+							class="min-h-[36px] w-20 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+						/>
+					</div>
+					{#if data.readingPlaces.length > 0}
+						<div class="space-y-1">
+							<label for="reading_place_id" class="text-xs text-gray-500 dark:text-gray-400"
+								>{m.progress_reading_place()}</label
+							>
+							<select
+								id="reading_place_id"
+								name="reading_place_id"
+								class="min-h-[36px] rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+							>
+								<option value="">—</option>
+								{#each data.readingPlaces as place (place.id)}
+									<option value={place.id}>{place.name}</option>
+								{/each}
+							</select>
+						</div>
+					{/if}
+					<div class="space-y-1">
+						<label for="note" class="text-xs text-gray-500 dark:text-gray-400"
+							>{m.progress_note()}</label
+						>
+						<input
+							id="note"
+							name="note"
+							type="text"
+							class="min-h-[36px] w-40 rounded border border-gray-300 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+						/>
+					</div>
+					<Button type="submit" size="sm">{m.progress_update()}</Button>
+				</form>
+
+				<!-- Progress history -->
+				{#if data.progressHistory.length > 0}
+					<div class="space-y-2">
+						<h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+							{m.progress_history()}
+						</h3>
+						<div class="space-y-1">
+							{#each data.progressHistory as entry (entry.id)}
+								<div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+									<span class="shrink-0 text-xs text-gray-400"
+										>{new Date(entry.created_at).toLocaleDateString()}</span
+									>
+									{#if entry.page !== null}<span>p. {entry.page}</span>{/if}
+									{#if entry.percent !== null}<span>{Math.round(entry.percent)}%</span>{/if}
+									{#if entry.note}<span class="italic">"{entry.note}"</span>{/if}
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+			</div>
+		{/if}
+	{/if}
+
 	{#if translations.length > 0}
 		<div class="space-y-2">
 			<h2 class="text-lg font-semibold text-gray-900 dark:text-white">{m.book_translations()}</h2>

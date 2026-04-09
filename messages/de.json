@@ -87,5 +87,21 @@
 	"status_label": "Bezeichnung",
 	"status_category": "Kategorie",
 	"status_save": "Speichern",
-	"status_delete_confirm": "Möchtest du diesen Status wirklich löschen?"
+	"status_delete_confirm": "Möchtest du diesen Status wirklich löschen?",
+	"progress_title": "Fortschritt",
+	"progress_current_page": "Aktuelle Seite",
+	"progress_total_pages": "Gesamtseiten",
+	"progress_percent": "Prozent",
+	"progress_note": "Notiz",
+	"progress_reading_place": "Leseort",
+	"progress_update": "Fortschritt aktualisieren",
+	"progress_history": "Fortschrittsverlauf",
+	"progress_no_history": "Noch keine Fortschrittseinträge.",
+	"currently_reading_title": "Aktuell am Lesen",
+	"currently_reading_empty": "Du liest gerade keine Bücher.",
+	"reading_places_title": "Leseorte",
+	"reading_places_empty": "Noch keine Leseorte.",
+	"reading_place_name": "Name",
+	"reading_place_create": "Ort hinzufügen",
+	"reading_place_delete_confirm": "Diesen Leseort löschen?"
 }

@@ -87,5 +87,21 @@
 	"status_label": "Label",
 	"status_category": "Category",
 	"status_save": "Save",
-	"status_delete_confirm": "Are you sure you want to delete this status?"
+	"status_delete_confirm": "Are you sure you want to delete this status?",
+	"progress_title": "Progress",
+	"progress_current_page": "Current Page",
+	"progress_total_pages": "Total Pages",
+	"progress_percent": "Percent",
+	"progress_note": "Note",
+	"progress_reading_place": "Reading Place",
+	"progress_update": "Update Progress",
+	"progress_history": "Progress History",
+	"progress_no_history": "No progress entries yet.",
+	"currently_reading_title": "Currently Reading",
+	"currently_reading_empty": "You're not reading any books right now.",
+	"reading_places_title": "Reading Places",
+	"reading_places_empty": "No reading places yet.",
+	"reading_place_name": "Name",
+	"reading_place_create": "Add Place",
+	"reading_place_delete_confirm": "Delete this reading place?"
 }

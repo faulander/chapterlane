@@ -15,6 +15,9 @@ import {
 	removeBookFromShelf,
 	getShelvesForUserBook
 } from '$lib/server/db/shelves';
+import { getProgressHistory } from '$lib/server/db/progress';
+import { getUserReadingPlaces } from '$lib/server/db/reading-places';
+import { logProgress } from '$lib/server/services/progress-service';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const user = locals.user!;
@@ -29,8 +32,19 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const translations = getTitleTranslations(params.id);
 	const shelves = getUserShelves(user.id);
 	const bookShelves = userBook ? getShelvesForUserBook(userBook.id) : [];
+	const progressHistory = userBook ? getProgressHistory(userBook.id) : [];
+	const readingPlaces = getUserReadingPlaces(user.id);
 
-	return { book, userBook, statuses, translations, shelves, bookShelves };
+	return {
+		book,
+		userBook,
+		statuses,
+		translations,
+		shelves,
+		bookShelves,
+		progressHistory,
+		readingPlaces
+	};
 };
 
 export const actions: Actions = {
@@ -80,6 +94,41 @@ export const actions: Actions = {
 		if (!userBook) return fail(400, { error: 'Book not in library' });
 
 		addBookToShelf(shelfId, userBook.id);
+	},
+
+	logProgress: async ({ request, params, locals }) => {
+		const user = locals.user!;
+		const data = await request.formData();
+		const page = data.get('page') as string;
+		const percent = data.get('percent') as string;
+		const readingPlaceId = (data.get('reading_place_id') as string) || null;
+		const note = (data.get('note') as string) || null;
+
+		const userBook = getUserBook(user.id, params.id);
+		if (!userBook) return fail(400, { error: 'Book not in library' });
+
+		const result = logProgress({
+			userBookId: userBook.id,
+			page: page ? parseInt(page, 10) : null,
+			percent: percent ? parseFloat(percent) : null,
+			readingPlaceId,
+			note
+		});
+
+		if (!result.success) return fail(400, { error: result.error });
+	},
+
+	updateTotalPages: async ({ request, params, locals }) => {
+		const user = locals.user!;
+		const data = await request.formData();
+		const totalPages = data.get('total_pages') as string;
+
+		const userBook = getUserBook(user.id, params.id);
+		if (!userBook) return fail(400, { error: 'Book not in library' });
+
+		updateUserBook(userBook.id, {
+			user_total_pages: totalPages ? parseInt(totalPages, 10) : null
+		});
 	},
 
 	removeFromShelf: async ({ request, params, locals }) => {

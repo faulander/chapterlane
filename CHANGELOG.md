@@ -5,6 +5,20 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-04-09
+
+### Added
+
+- Progress migration: reading_places and progress_entries tables
+- Reading places DB module with CRUD operations
+- Progress DB module for creating and querying progress entries
+- Progress service with Active-status validation and auto-percent calculation
+- Book detail page: progress form, progress bar, progress history timeline (Active books only)
+- Book detail page: total pages setting
+- Currently Reading page with inline quick-progress updates per book
+- Reading places settings page with create/delete
+- i18n messages for progress, reading places, currently reading (en + de)
+
 ## [0.3.0] - 2026-04-09
 
 ### Added
