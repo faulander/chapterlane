@@ -20,6 +20,7 @@
 	{#each locales as locale (locale.code)}
 		<a
 			href={href(getCleanPath(), { locale: locale.code })}
+			data-sveltekit-reload
 			class="flex min-h-[32px] items-center rounded-md px-2 py-1 text-xs font-medium
 				{currentLocale === locale.code
 				? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400'
