@@ -5,6 +5,16 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-04-09
+
+### Fixed
+
+- Language switcher now triggers full page reload via data-sveltekit-reload
+- Paraglide URL strategy enabled (was missing "url" in strategy config)
+- Hooks order: Paraglide middleware now wraps auth for proper locale context
+- Switched to Bun runtime for Vite (bunx --bun), enabling bun:sqlite and Bun.password natively
+- Removed better-sqlite3 and bcryptjs dependencies in favor of Bun built-ins
+
 ## [0.2.0] - 2026-04-09
 
 ### Added
