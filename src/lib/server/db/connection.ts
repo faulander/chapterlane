@@ -1,35 +1,32 @@
-import { Database } from 'bun:sqlite'
-import { existsSync, mkdirSync } from 'fs'
-import { dirname } from 'path'
-import { createLogger } from '../utils/logger'
-import { runMigrations } from './migrate'
+import Database from 'better-sqlite3';
+import { existsSync, mkdirSync } from 'fs';
+import { dirname } from 'path';
+import { createLogger } from '../utils/logger';
+import { runMigrations } from './migrate';
 
-const log = createLogger('db')
+const log = createLogger('db');
 
-const DB_PATH = process.env.DATABASE_PATH || 'data/chapterlane.db'
+const DB_PATH = process.env.DATABASE_PATH || 'data/chapterlane.db';
+
+let _db: Database.Database | null = null;
 
 function ensureDirectory(filePath: string): void {
-	const dir = dirname(filePath)
+	const dir = dirname(filePath);
 	if (!existsSync(dir)) {
-		mkdirSync(dir, { recursive: true })
-		log.info('Created database directory', { dir })
+		mkdirSync(dir, { recursive: true });
+		log.info('Created database directory', { dir });
 	}
 }
 
-function createDatabase(): Database {
-	ensureDirectory(DB_PATH)
-
-	const db = new Database(DB_PATH)
-
-	db.exec('PRAGMA journal_mode=WAL')
-	db.exec('PRAGMA foreign_keys=ON')
-	db.exec('PRAGMA busy_timeout=5000')
-
-	log.info('Database connection established', { path: DB_PATH })
-
-	runMigrations(db)
-
-	return db
+export function getDb(): Database.Database {
+	if (!_db) {
+		ensureDirectory(DB_PATH);
+		_db = new Database(DB_PATH);
+		_db.pragma('journal_mode = WAL');
+		_db.pragma('foreign_keys = ON');
+		_db.pragma('busy_timeout = 5000');
+		log.info('Database connection established', { path: DB_PATH });
+		runMigrations(_db);
+	}
+	return _db;
 }
-
-export const db = createDatabase()
