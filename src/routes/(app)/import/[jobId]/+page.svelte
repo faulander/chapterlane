@@ -5,6 +5,11 @@
 	import Button from '$lib/components/ui/Button.svelte';
 
 	let { data } = $props();
+	let bottomEl: HTMLDivElement | undefined = $state();
+
+	$effect(() => {
+		bottomEl?.scrollIntoView({ behavior: 'smooth' });
+	});
 </script>
 
 <svelte:head>
@@ -72,7 +77,32 @@
 		{/each}
 	</div>
 
-	<form method="POST" action="?/confirm">
-		<Button type="submit">{m.import_confirm()}</Button>
-	</form>
+	<div
+		bind:this={bottomEl}
+		class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
+	>
+		<form method="POST" action="?/confirm" class="flex flex-wrap items-end gap-4">
+			<div class="space-y-1">
+				<label for="language" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+					{m.book_language()}
+				</label>
+				<select
+					id="language"
+					name="language"
+					class="min-h-[44px] rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
+				>
+					<option value="de">Deutsch</option>
+					<option value="en">English</option>
+					<option value="fr">Français</option>
+					<option value="es">Español</option>
+					<option value="it">Italiano</option>
+					<option value="pt">Português</option>
+					<option value="nl">Nederlands</option>
+					<option value="ja">日本語</option>
+					<option value="zh">中文</option>
+				</select>
+			</div>
+			<Button type="submit">{m.import_confirm()}</Button>
+		</form>
+	</div>
 </div>

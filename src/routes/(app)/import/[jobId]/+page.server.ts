@@ -27,15 +27,18 @@ export const actions: Actions = {
 		}
 	},
 
-	confirm: async ({ params, locals }) => {
+	confirm: async ({ request, params, locals }) => {
 		const user = locals.user!;
 		const job = getImportJob(params.jobId);
 		if (!job || job.user_id !== user.id) return fail(403, { error: 'Not authorized' });
 
+		const data = await request.formData();
+		const language = (data.get('language') as string) || 'en';
+
 		// Mark as importing immediately, then run in background
 		const { updateImportJob } = await import('$lib/server/db/imports');
 		updateImportJob(params.jobId, { status: 'importing' });
-		setTimeout(() => executeImport(params.jobId, user.id), 50);
+		setTimeout(() => executeImport(params.jobId, user.id, language), 50);
 		throw redirect(302, `/import/${params.jobId}/summary`);
 	}
 };

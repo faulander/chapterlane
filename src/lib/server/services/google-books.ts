@@ -70,6 +70,7 @@ export async function searchGoogleBooks(
 			publishedDate: item.volumeInfo.publishedDate || null
 		}));
 	} catch (e) {
+		if (e instanceof Error && e.message === 'RATE_LIMITED') throw e;
 		log.error('Google Books search failed', { error: String(e) });
 		return [];
 	}

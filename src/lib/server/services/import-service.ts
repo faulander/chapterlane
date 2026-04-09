@@ -115,7 +115,7 @@ export function startImport(userId: string, source: string, fileContent: string)
 	return jobId;
 }
 
-export function executeImport(jobId: string, userId: string): void {
+export function executeImport(jobId: string, userId: string, language: string = 'en'): void {
 	updateImportJob(jobId, { status: 'importing' });
 
 	const rows = getImportRows(jobId);
@@ -149,6 +149,7 @@ export function executeImport(jobId: string, userId: string): void {
 
 						bookId = addBook({
 							original_title: row.parsed_title,
+							original_language: language,
 							authors
 						});
 					}
