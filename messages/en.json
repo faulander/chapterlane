@@ -126,5 +126,22 @@
 	"import_summary_errors": "Errors",
 	"import_confidence_high": "High match",
 	"import_confidence_low": "Low match",
-	"import_history": "Previous Imports"
+	"import_history": "Previous Imports",
+	"friends_title": "Friends",
+	"friends_empty": "You haven't connected with anyone yet.",
+	"friends_search": "Search users...",
+	"friends_send_request": "Add Friend",
+	"friends_request_sent": "Request sent",
+	"friends_accept": "Accept",
+	"friends_reject": "Decline",
+	"friends_remove": "Remove",
+	"friends_block": "Block",
+	"friends_pending": "Pending Requests",
+	"friends_pending_empty": "No pending requests.",
+	"feed_empty": "No activity yet. Connect with friends to see their updates!",
+	"feed_status_changed": "{name} changed status of {book} to {status}",
+	"feed_book_completed": "{name} completed {book}",
+	"feed_progress_milestone": "{name} reached {percent}% on {book}",
+	"profile_member_since": "Member since {date}",
+	"user_not_found": "User not found"
 }

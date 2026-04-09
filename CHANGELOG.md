@@ -5,6 +5,19 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-04-09
+
+### Added
+
+- Social migration: friend_requests, friendships, blocks, activity_events tables
+- Friends DB module: send/accept/reject requests, remove/block, search users
+- Feed DB module: create events, query friend feed with visibility and block filtering
+- Feed service with event emission helpers (status change, completion, progress milestones)
+- Friends page: search users, send requests, accept/reject pending, remove friends
+- User profile page with privacy-aware activity display
+- Dashboard now shows friend activity feed
+- i18n messages for friends, feed, profile (en + de)
+
 ## [0.6.0] - 2026-04-09
 
 ### Added
