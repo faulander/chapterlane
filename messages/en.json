@@ -143,5 +143,9 @@
 	"feed_book_completed": "{name} completed {book}",
 	"feed_progress_milestone": "{name} reached {percent}% on {book}",
 	"profile_member_since": "Member since {date}",
-	"user_not_found": "User not found"
+	"user_not_found": "User not found",
+	"list_create": "Create List",
+	"list_title_label": "Title",
+	"list_description_label": "Description",
+	"lists_empty": "No lists yet."
 }

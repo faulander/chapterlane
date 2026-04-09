@@ -5,6 +5,16 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-04-09
+
+### Added
+
+- Reading lists migration: reading_lists and reading_list_items tables
+- Lists DB module: CRUD, items with position ordering, reorder support
+- Lists page with create/delete and item counts
+- List detail page with ordered book items and remove actions
+- i18n messages for lists (en + de)
+
 ## [0.7.0] - 2026-04-09
 
 ### Added
