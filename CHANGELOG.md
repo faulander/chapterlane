@@ -5,6 +5,22 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-04-09
+
+### Fixed
+
+- Google Books API key now loaded via `$env/dynamic/private` (was missing from `process.env`)
+- Background cover fetcher: 5min backoff on 429, stops after 3 consecutive rate limits, resumes on restart
+- Cover title matching relaxed: author fallback for translated titles, lower word overlap threshold
+- Removed per-book cover fetch during import (was causing immediate rate limits)
+- Cover fetch triggers on server startup for books missing covers
+- Import upload and confirm forms: removed `use:enhance` to fix redirect issues
+- Import now runs in background with live progress bar on summary page
+- Import preview: language selector (defaults to DE), auto-scrolls to bottom
+- Library page: search filter now updates page counts and pagination
+- Paraglide locale switching: added `data-sveltekit-reload`, URL strategy enabled, hooks reordered
+- Bun runtime: switched to `bunx --bun vite` for native `bun:sqlite` and `Bun.password` support
+
 ## [1.0.0] - 2026-04-09
 
 ### Added
