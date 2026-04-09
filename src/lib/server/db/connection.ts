@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import { existsSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 import { createLogger } from '../utils/logger';
@@ -8,7 +8,7 @@ const log = createLogger('db');
 
 const DB_PATH = process.env.DATABASE_PATH || 'data/chapterlane.db';
 
-let _db: Database.Database | null = null;
+let _db: Database | null = null;
 
 function ensureDirectory(filePath: string): void {
 	const dir = dirname(filePath);
@@ -18,13 +18,13 @@ function ensureDirectory(filePath: string): void {
 	}
 }
 
-export function getDb(): Database.Database {
+export function getDb(): Database {
 	if (!_db) {
 		ensureDirectory(DB_PATH);
 		_db = new Database(DB_PATH);
-		_db.pragma('journal_mode = WAL');
-		_db.pragma('foreign_keys = ON');
-		_db.pragma('busy_timeout = 5000');
+		_db.exec('PRAGMA journal_mode=WAL');
+		_db.exec('PRAGMA foreign_keys=ON');
+		_db.exec('PRAGMA busy_timeout=5000');
 		log.info('Database connection established', { path: DB_PATH });
 		runMigrations(_db);
 	}

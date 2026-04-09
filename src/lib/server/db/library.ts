@@ -70,7 +70,7 @@ export function getUserBooks(
 		WHERE ub.user_id = ?
 	`;
 
-	const params: unknown[] = [userId];
+	const params: (string | number)[] = [userId];
 
 	if (options.statusCategory) {
 		sql += ' AND sd.system_category = ?';
@@ -99,7 +99,7 @@ export function getUserBookCount(userId: string, statusCategory?: string): numbe
 		LEFT JOIN status_definitions sd ON sd.id = ub.current_status_id
 		WHERE ub.user_id = ?
 	`;
-	const params: unknown[] = [userId];
+	const params: (string | number)[] = [userId];
 
 	if (statusCategory) {
 		sql += ' AND sd.system_category = ?';

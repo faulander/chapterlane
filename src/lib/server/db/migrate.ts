@@ -1,4 +1,4 @@
-import type Database from 'better-sqlite3';
+import type { Database } from 'bun:sqlite';
 import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { createLogger } from '../utils/logger';
@@ -7,7 +7,7 @@ const log = createLogger('migrate');
 
 const MIGRATIONS_DIR = join(import.meta.dirname, 'migrations');
 
-export function runMigrations(db: Database.Database): void {
+export function runMigrations(db: Database): void {
 	db.exec(`
 		CREATE TABLE IF NOT EXISTS _migrations (
 			version INTEGER PRIMARY KEY,
@@ -18,7 +18,7 @@ export function runMigrations(db: Database.Database): void {
 
 	const applied = new Set(
 		db
-			.prepare('SELECT version FROM _migrations')
+			.query('SELECT version FROM _migrations')
 			.all()
 			.map((row) => (row as { version: number }).version)
 	);
@@ -46,11 +46,10 @@ export function runMigrations(db: Database.Database): void {
 		const sql = readFileSync(join(MIGRATIONS_DIR, file), 'utf-8');
 		log.info('Applying migration', { version, file });
 
-		const applyMigration = db.transaction(() => {
+		db.transaction(() => {
 			db.exec(sql);
 			db.prepare('INSERT INTO _migrations (version, name) VALUES (?, ?)').run(version, file);
-		});
-		applyMigration();
+		})();
 
 		log.info('Migration applied successfully', { version, file });
 	}
