@@ -32,7 +32,9 @@ export const actions: Actions = {
 		const job = getImportJob(params.jobId);
 		if (!job || job.user_id !== user.id) return fail(403, { error: 'Not authorized' });
 
-		// Start import in background, redirect immediately
+		// Mark as importing immediately, then run in background
+		const { updateImportJob } = await import('$lib/server/db/imports');
+		updateImportJob(params.jobId, { status: 'importing' });
 		setTimeout(() => executeImport(params.jobId, user.id), 50);
 		throw redirect(302, `/import/${params.jobId}/summary`);
 	}
