@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { createLogger } from '../utils/logger';
 
 const log = createLogger('google-books');
@@ -21,13 +22,17 @@ export async function searchGoogleBooks(
 ): Promise<GoogleBookResult[]> {
 	if (!query.trim()) return [];
 
-	const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+	const apiKey = env.GOOGLE_BOOKS_API_KEY;
 	const params = new URLSearchParams({
 		q: query,
 		maxResults: String(maxResults),
 		printType: 'books'
 	});
-	if (apiKey) params.set('key', apiKey);
+	if (apiKey) {
+		params.set('key', apiKey);
+	} else {
+		log.warn('No GOOGLE_BOOKS_API_KEY set, requests may be rate limited');
+	}
 
 	const url = `${API_BASE}?${params}`;
 
