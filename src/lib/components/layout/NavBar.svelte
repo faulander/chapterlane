@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { BookOpen, Menu, X } from 'svelte-lucide';
-	import { resolve } from '$app/paths';
-	import { localizeHref } from '$lib/paraglide/runtime';
+	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
 	import LanguageSwitcher from '$lib/components/layout/LanguageSwitcher.svelte';
@@ -14,7 +13,7 @@
 >
 	<div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
 		<a
-			href={resolve(localizeHref('/dashboard'))}
+			href={href('/dashboard')}
 			class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white"
 		>
 			<BookOpen size="24" />
@@ -42,49 +41,49 @@
 		<nav class="border-t border-gray-200 bg-white md:hidden dark:border-gray-800 dark:bg-gray-900">
 			<div class="space-y-1 px-4 py-2">
 				<a
-					href={resolve(localizeHref('/dashboard'))}
+					href={href('/dashboard')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_dashboard()}
 				</a>
 				<a
-					href={resolve(localizeHref('/books'))}
+					href={href('/books')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_my_books()}
 				</a>
 				<a
-					href={resolve(localizeHref('/shelves'))}
+					href={href('/shelves')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_shelves()}
 				</a>
 				<a
-					href={resolve(localizeHref('/lists'))}
+					href={href('/lists')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_lists()}
 				</a>
 				<a
-					href={resolve(localizeHref('/stats'))}
+					href={href('/stats')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_stats()}
 				</a>
 				<a
-					href={resolve(localizeHref('/friends'))}
+					href={href('/friends')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>
 					{m.nav_friends()}
 				</a>
 				<a
-					href={resolve(localizeHref('/settings'))}
+					href={href('/settings')}
 					class="block rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
 					onclick={() => (menuOpen = false)}
 				>

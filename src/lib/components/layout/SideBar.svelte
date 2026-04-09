@@ -10,8 +10,7 @@
 		LogOut
 	} from 'svelte-lucide';
 	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
-	import { localizeHref } from '$lib/paraglide/runtime';
+	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 
 	const navItems = $derived([
@@ -38,7 +37,7 @@
 	<nav class="flex flex-1 flex-col gap-1 p-3">
 		{#each navItems as item (item.href)}
 			<a
-				href={resolve(localizeHref(item.href))}
+				href={href(item.href)}
 				class="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors
 					{isActive(item.href)
 					? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
@@ -51,7 +50,7 @@
 	</nav>
 
 	<div class="border-t border-gray-200 p-3 dark:border-gray-800">
-		<form method="POST" action={resolve(localizeHref('/logout'))}>
+		<form method="POST" action={href('/logout')}>
 			<button
 				type="submit"
 				class="flex min-h-[44px] w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"

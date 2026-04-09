@@ -40,5 +40,19 @@
 	"common_edit": "Bearbeiten",
 	"common_loading": "Laden...",
 	"common_error": "Etwas ist schiefgelaufen",
-	"common_success": "Erfolg"
+	"common_success": "Erfolg",
+	"book_add_heading": "Buch hinzufügen",
+	"book_original_title": "Originaltitel",
+	"book_original_title_label": "Originaltitel",
+	"book_language": "Sprache",
+	"book_authors": "Autoren",
+	"book_authors_placeholder": "Autor 1, Autor 2, ...",
+	"book_description": "Beschreibung",
+	"book_cover_url": "Cover-Bild-URL",
+	"book_add_submit": "Buch hinzufügen",
+	"book_detail_by": "von ",
+	"book_in_library": "In deiner Bibliothek",
+	"book_translations": "Übersetzungen",
+	"book_not_found": "Buch nicht gefunden",
+	"book_added_success": "Buch zu deiner Bibliothek hinzugefügt"
 }

@@ -40,5 +40,19 @@
 	"common_edit": "Edit",
 	"common_loading": "Loading...",
 	"common_error": "Something went wrong",
-	"common_success": "Success"
+	"common_success": "Success",
+	"book_add_heading": "Add a Book",
+	"book_original_title": "Original Title",
+	"book_original_title_label": "Original title",
+	"book_language": "Language",
+	"book_authors": "Authors",
+	"book_authors_placeholder": "Author 1, Author 2, ...",
+	"book_description": "Description",
+	"book_cover_url": "Cover Image URL",
+	"book_add_submit": "Add Book",
+	"book_detail_by": "by ",
+	"book_in_library": "In your library",
+	"book_translations": "Translations",
+	"book_not_found": "Book not found",
+	"book_added_success": "Book added to your library"
 }

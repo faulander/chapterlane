@@ -5,6 +5,20 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-04-09
+
+### Added
+
+- Books migration: books, book_title_translations, authors, book_authors, external_book_refs tables
+- Content-backed FTS5 full-text search with books_search table and auto-sync triggers
+- User books migration: status_definitions (5 system defaults), user_books, user_book_status_history
+- DB modules: books, authors, search, library, statuses (all with prepared statements)
+- Book service: addBook with author linking, FTS indexing, and title translation support
+- Book detail page with translated title display and language fallback
+- Manual add-book page with form validation
+- Navigation helper (href utility) wrapping Paraglide localizeHref + resolve
+- i18n messages for book-related UI in English and German
+
 ## [0.1.0] - 2026-04-09
 
 ### Added

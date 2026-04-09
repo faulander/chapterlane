@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { LayoutDashboard, BookOpen, Library, ChartBar, Users } from 'svelte-lucide';
 	import { page } from '$app/state';
-	import { resolve } from '$app/paths';
-	import { localizeHref } from '$lib/paraglide/runtime';
+	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 
 	const navItems = $derived([
@@ -26,7 +25,7 @@
 	<div class="flex items-center justify-around">
 		{#each navItems as item (item.href)}
 			<a
-				href={resolve(localizeHref(item.href))}
+				href={href(item.href)}
 				class="flex min-h-[56px] flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs
 					{isActive(item.href) ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}"
 			>

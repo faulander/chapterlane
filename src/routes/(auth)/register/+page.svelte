@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { resolve } from '$app/paths';
-	import { localizeHref } from '$lib/paraglide/runtime';
+	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Input from '$lib/components/ui/Input.svelte';
@@ -68,7 +67,7 @@
 		<p class="text-center text-sm text-gray-600 dark:text-gray-400">
 			{m.auth_has_account()}
 			<a
-				href={resolve(localizeHref('/login'))}
+				href={href('/login')}
 				class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
 			>
 				{m.auth_login()}
