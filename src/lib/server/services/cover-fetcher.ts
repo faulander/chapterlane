@@ -135,42 +135,42 @@ async function runLoop(): Promise<void> {
 
 	try {
 		let totalFetched = 0;
-		let attempts = 0;
-		let consecutiveEmpty = 0;
-		const maxAttempts = 100;
+		let consecutiveRateLimits = 0;
+		const maxRateLimits = 3; // Stop after 3 consecutive rate limits
 
-		while (attempts < maxAttempts) {
+		while (true) {
 			const { fetched, rateLimited } = await processBatch();
 			totalFetched += fetched;
-			attempts++;
 
 			if (rateLimited) {
-				// Back off for 60 seconds on rate limit
-				log.info('Rate limited, waiting 60s before retry', { totalFetched, attempts });
-				await new Promise((resolve) => setTimeout(resolve, 60000));
-				consecutiveEmpty = 0; // Reset -- we didn't actually try all books
+				consecutiveRateLimits++;
+				if (consecutiveRateLimits >= maxRateLimits) {
+					log.info('Rate limited too many times, pausing until next restart', {
+						totalFetched,
+						consecutiveRateLimits
+					});
+					break;
+				}
+				// Back off 5 minutes on rate limit
+				log.info('Rate limited, waiting 5 minutes', { totalFetched, consecutiveRateLimits });
+				await new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000));
 				continue;
 			}
+
+			consecutiveRateLimits = 0;
 
 			const remaining = getAllBooksWithoutCovers(1);
 			if (remaining.length === 0) break;
 
 			if (fetched === 0) {
-				consecutiveEmpty++;
-				// Only stop after 3 consecutive empty batches (not rate limited)
-				if (consecutiveEmpty >= 3) {
-					log.info('No more covers found after 3 attempts, stopping', { totalFetched, attempts });
-					break;
-				}
-				// Wait a bit before retrying
-				await new Promise((resolve) => setTimeout(resolve, 5000));
-			} else {
-				consecutiveEmpty = 0;
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				log.info('No more covers found in batch, stopping', { totalFetched });
+				break;
 			}
+
+			await new Promise((resolve) => setTimeout(resolve, 2000));
 		}
 
-		log.info('Background cover fetch complete', { totalFetched, attempts });
+		log.info('Background cover fetch complete', { totalFetched });
 	} catch (e) {
 		log.error('Background cover fetch error', { error: String(e) });
 	} finally {
