@@ -78,11 +78,12 @@ async function fetchCoverForBookEntry(book: BookWithoutCover): Promise<boolean> 
 	return false;
 }
 
-async function processBatch(): Promise<number> {
+async function processBatch(): Promise<{ fetched: number; rateLimited: boolean }> {
 	const books = getAllBooksWithoutCovers();
-	if (books.length === 0) return 0;
+	if (books.length === 0) return { fetched: 0, rateLimited: false };
 
 	let fetched = 0;
+	let rateLimited = false;
 
 	for (const book of books) {
 		try {
@@ -90,12 +91,18 @@ async function processBatch(): Promise<number> {
 			if (found) fetched++;
 			await new Promise((resolve) => setTimeout(resolve, DELAY_MS));
 		} catch (e) {
-			log.warn('Cover fetch failed', { bookId: book.id, error: String(e) });
+			const msg = String(e);
+			if (msg.includes('RATE_LIMITED')) {
+				log.warn('Rate limited by Google Books, backing off');
+				rateLimited = true;
+				break;
+			}
+			log.warn('Cover fetch failed', { bookId: book.id, error: msg });
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 		}
 	}
 
-	return fetched;
+	return { fetched, rateLimited };
 }
 
 async function runLoop(): Promise<void> {
@@ -110,23 +117,38 @@ async function runLoop(): Promise<void> {
 	try {
 		let totalFetched = 0;
 		let attempts = 0;
-		const maxAttempts = 100; // Safety limit: 100 batches * 20 = 2000 books max
+		let consecutiveEmpty = 0;
+		const maxAttempts = 100;
 
 		while (attempts < maxAttempts) {
-			const fetched = await processBatch();
+			const { fetched, rateLimited } = await processBatch();
 			totalFetched += fetched;
 			attempts++;
+
+			if (rateLimited) {
+				// Back off for 60 seconds on rate limit
+				log.info('Rate limited, waiting 60s before retry', { totalFetched, attempts });
+				await new Promise((resolve) => setTimeout(resolve, 60000));
+				consecutiveEmpty = 0; // Reset -- we didn't actually try all books
+				continue;
+			}
 
 			const remaining = getAllBooksWithoutCovers(1);
 			if (remaining.length === 0) break;
 
-			// If we fetched 0 in this batch, remaining books probably have no covers on Google
 			if (fetched === 0) {
-				log.info('No more covers found, stopping', { totalFetched, attempts });
-				break;
+				consecutiveEmpty++;
+				// Only stop after 3 consecutive empty batches (not rate limited)
+				if (consecutiveEmpty >= 3) {
+					log.info('No more covers found after 3 attempts, stopping', { totalFetched, attempts });
+					break;
+				}
+				// Wait a bit before retrying
+				await new Promise((resolve) => setTimeout(resolve, 5000));
+			} else {
+				consecutiveEmpty = 0;
+				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
-
-			await new Promise((resolve) => setTimeout(resolve, 1000));
 		}
 
 		log.info('Background cover fetch complete', { totalFetched, attempts });

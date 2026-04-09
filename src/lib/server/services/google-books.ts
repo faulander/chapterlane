@@ -35,6 +35,9 @@ export async function searchGoogleBooks(
 		const response = await fetch(url);
 		if (!response.ok) {
 			log.warn('Google Books API error', { status: response.status });
+			if (response.status === 429) {
+				throw new Error('RATE_LIMITED');
+			}
 			return [];
 		}
 
