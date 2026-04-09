@@ -10,8 +10,8 @@ interface BookWithoutCover {
 	authors: string;
 }
 
-const BATCH_SIZE = 20;
-const DELAY_MS = 500;
+const BATCH_SIZE = 10;
+const DELAY_MS = 1500;
 let running = false;
 let queued = false;
 
@@ -185,11 +185,11 @@ async function runLoop(): Promise<void> {
 
 /**
  * Trigger a background cover fetch for all books without covers.
- * Deferred via setTimeout so it never blocks the calling request.
+ * Starts after a 10s delay to let the API cool down after import.
  * Safe to call multiple times -- queues if already running.
  */
 export function triggerCoverFetch(): void {
-	setTimeout(() => runLoop(), 100);
+	setTimeout(() => runLoop(), 10000);
 }
 
 /**
