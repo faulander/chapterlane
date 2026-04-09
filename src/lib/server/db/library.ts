@@ -99,10 +99,13 @@ export function getUserBooks(
 		.all(...params) as UserBookWithDetails[];
 }
 
-export function getUserBookCount(userId: string, statusCategory?: string): number {
+export function getUserBookCount(userId: string, statusCategory?: string, search?: string): number {
 	let sql = `
-		SELECT COUNT(*) as count FROM user_books ub
+		SELECT COUNT(DISTINCT ub.id) as count FROM user_books ub
 		LEFT JOIN status_definitions sd ON sd.id = ub.current_status_id
+		LEFT JOIN books b ON b.id = ub.book_id
+		LEFT JOIN book_authors ba ON ba.book_id = b.id
+		LEFT JOIN authors a ON a.id = ba.author_id
 		WHERE ub.user_id = ?
 	`;
 	const params: (string | number)[] = [userId];
@@ -110,6 +113,12 @@ export function getUserBookCount(userId: string, statusCategory?: string): numbe
 	if (statusCategory) {
 		sql += ' AND sd.system_category = ?';
 		params.push(statusCategory);
+	}
+
+	if (search) {
+		sql += ' AND (b.original_title LIKE ? OR a.name LIKE ?)';
+		const pattern = `%${search}%`;
+		params.push(pattern, pattern);
 	}
 
 	return (

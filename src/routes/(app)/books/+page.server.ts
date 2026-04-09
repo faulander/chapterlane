@@ -18,12 +18,12 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		offset
 	});
 	const counts = {
-		all: getUserBookCount(user.id),
-		planned: getUserBookCount(user.id, 'planned'),
-		active: getUserBookCount(user.id, 'active'),
-		paused: getUserBookCount(user.id, 'paused'),
-		completed: getUserBookCount(user.id, 'completed'),
-		dropped: getUserBookCount(user.id, 'dropped')
+		all: getUserBookCount(user.id, undefined, search),
+		planned: getUserBookCount(user.id, 'planned', search),
+		active: getUserBookCount(user.id, 'active', search),
+		paused: getUserBookCount(user.id, 'paused', search),
+		completed: getUserBookCount(user.id, 'completed', search),
+		dropped: getUserBookCount(user.id, 'dropped', search)
 	};
 
 	const totalForFilter = statusCategory
