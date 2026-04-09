@@ -13,6 +13,7 @@ import { parseGoodreadsCSV, mapGoodreadsStatus } from './parsers/goodreads-parse
 import { parseStorygraphCSV, mapStorygraphStatus } from './parsers/storygraph-parser';
 import { parseCalibreCSV } from './parsers/calibre-parser';
 import { getDb } from '../db/connection';
+import { triggerCoverFetch } from './cover-fetcher';
 
 const log = createLogger('import-service');
 
@@ -184,4 +185,7 @@ export function executeImport(jobId: string, userId: string): void {
 	});
 
 	log.info('Import completed', { jobId, importedCount, skippedCount });
+
+	// Trigger background cover fetch for newly imported books
+	triggerCoverFetch();
 }

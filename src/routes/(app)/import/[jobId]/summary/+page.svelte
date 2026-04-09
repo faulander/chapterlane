@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	import { CircleCheck, CircleX, CircleAlert, Image } from 'svelte-lucide';
+	import { CircleCheck, CircleX, CircleAlert } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import Button from '$lib/components/ui/Button.svelte';
 
-	let { data, form } = $props();
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -47,22 +46,11 @@
 		{/if}
 	</div>
 
-	<div class="flex flex-wrap gap-3">
-		<form method="POST" action="?/fetchCovers" use:enhance>
-			<Button type="submit" variant="secondary">
-				<Image size="16" class="mr-1" />{m.import_fetch_covers()}
-			</Button>
-		</form>
-		<a href={href('/books')}>
-			<Button>{m.nav_my_books()}</Button>
-		</a>
-	</div>
+	<p class="text-sm text-gray-500 dark:text-gray-400">
+		{m.import_covers_auto()}
+	</p>
 
-	{#if form?.coversFetched !== undefined}
-		<div
-			class="rounded-lg bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400"
-		>
-			{m.import_covers_fetched({ count: String(form.coversFetched) })}
-		</div>
-	{/if}
+	<a href={href('/books')}>
+		<Button>{m.nav_my_books()}</Button>
+	</a>
 </div>

@@ -8,6 +8,7 @@ import {
 } from '../db/books';
 import { getOrCreateAuthor, linkAuthorToBook, getAuthorsForBook } from '../db/authors';
 import { indexBook } from '../db/search';
+import { fetchCoverForBook } from './cover-fetcher';
 import { createLogger } from '../utils/logger';
 
 const log = createLogger('book-service');
@@ -64,6 +65,12 @@ export function addBook(input: AddBookInput): string {
 	indexBook(bookId, titles, authorNames);
 
 	log.info('Book added', { bookId, title: input.original_title });
+
+	// Fetch cover in background if not provided
+	if (!input.cover_url) {
+		fetchCoverForBook(bookId);
+	}
+
 	return bookId;
 }
 

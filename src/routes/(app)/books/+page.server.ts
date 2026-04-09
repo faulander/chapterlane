@@ -1,6 +1,5 @@
-import type { Actions, PageServerLoad } from './$types';
+import type { PageServerLoad } from './$types';
 import { getUserBooks, getUserBookCount } from '$lib/server/db/library';
-import { fetchCoversForUser } from '$lib/server/services/cover-fetcher';
 
 const PAGE_SIZE = 24;
 
@@ -39,11 +38,4 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		page,
 		totalPages
 	};
-};
-
-export const actions: Actions = {
-	fetchCovers: async ({ locals }) => {
-		const fetched = await fetchCoversForUser(locals.user!.id);
-		return { coversFetched: fetched };
-	}
 };

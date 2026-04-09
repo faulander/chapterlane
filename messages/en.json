@@ -165,6 +165,5 @@
 	"language_select": "Preferred Language",
 	"language_en": "English",
 	"language_de": "Deutsch",
-	"import_fetch_covers": "Fetch Covers",
-	"import_covers_fetched": "{count} covers fetched from Google Books"
+	"import_covers_auto": "Book covers are being fetched automatically in the background."
 }
