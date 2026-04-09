@@ -10,6 +10,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const imported = rows.filter((r) => r.import_result === 'imported').length;
 	const skipped = rows.filter((r) => r.import_result === 'skipped').length;
 	const errors = rows.filter((r) => r.import_result === 'error').length;
+	const pending = rows.filter((r) => r.import_result === null).length;
+	const inProgress =
+		job.status === 'importing' || job.status === 'pending' || job.status === 'parsing';
 
-	return { job, imported, skipped, errors };
+	return { job, imported, skipped, errors, pending, inProgress, total: rows.length };
 };

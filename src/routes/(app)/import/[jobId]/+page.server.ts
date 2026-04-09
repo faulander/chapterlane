@@ -6,7 +6,8 @@ import { executeImport } from '$lib/server/services/import-service';
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const job = getImportJob(params.jobId);
 	if (!job || job.user_id !== locals.user!.id) throw error(404, 'Import not found');
-	if (job.status === 'completed') throw redirect(302, `/import/${params.jobId}/summary`);
+	if (job.status === 'completed' || job.status === 'importing')
+		throw redirect(302, `/import/${params.jobId}/summary`);
 
 	const rows = getImportRows(params.jobId);
 	return { job, rows };
@@ -31,7 +32,8 @@ export const actions: Actions = {
 		const job = getImportJob(params.jobId);
 		if (!job || job.user_id !== user.id) return fail(403, { error: 'Not authorized' });
 
-		executeImport(params.jobId, user.id);
+		// Start import in background, redirect immediately
+		setTimeout(() => executeImport(params.jobId, user.id), 50);
 		throw redirect(302, `/import/${params.jobId}/summary`);
 	}
 };

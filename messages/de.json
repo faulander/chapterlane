@@ -165,5 +165,6 @@
 	"language_select": "Bevorzugte Sprache",
 	"language_en": "English",
 	"language_de": "Deutsch",
-	"import_covers_auto": "Buchcover werden automatisch im Hintergrund geladen."
+	"import_covers_auto": "Buchcover werden automatisch im Hintergrund geladen.",
+	"import_in_progress": "Importiere..."
 }

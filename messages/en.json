@@ -165,5 +165,6 @@
 	"language_select": "Preferred Language",
 	"language_en": "English",
 	"language_de": "Deutsch",
-	"import_covers_auto": "Book covers are being fetched automatically in the background."
+	"import_covers_auto": "Book covers are being fetched automatically in the background.",
+	"import_in_progress": "Importing..."
 }
