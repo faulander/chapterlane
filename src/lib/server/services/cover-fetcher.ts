@@ -144,10 +144,11 @@ async function runLoop(): Promise<void> {
 
 /**
  * Trigger a background cover fetch for all books without covers.
+ * Deferred via setTimeout so it never blocks the calling request.
  * Safe to call multiple times -- queues if already running.
  */
 export function triggerCoverFetch(): void {
-	runLoop();
+	setTimeout(() => runLoop(), 100);
 }
 
 /**
