@@ -26,10 +26,12 @@ function normalize(s: string): string {
 function titleMatches(bookTitle: string, resultTitle: string): boolean {
 	const a = normalize(bookTitle);
 	const b = normalize(resultTitle);
+
+	// Exact or substring match
 	if (a === b) return true;
 	if (a.includes(b) || b.includes(a)) return true;
 
-	// Check word overlap -- at least 50% of words must match
+	// Word overlap -- at least one significant word must match
 	const wordsA = new Set(a.split(' ').filter((w) => w.length > 2));
 	const wordsB = new Set(b.split(' ').filter((w) => w.length > 2));
 	if (wordsA.size === 0) return false;
@@ -38,7 +40,10 @@ function titleMatches(bookTitle: string, resultTitle: string): boolean {
 	for (const w of wordsA) {
 		if (wordsB.has(w)) overlap++;
 	}
-	return overlap / wordsA.size >= 0.5;
+
+	// If title has good overlap, accept it
+	if (wordsA.size <= 2) return overlap >= 1;
+	return overlap / wordsA.size >= 0.4;
 }
 
 function getAllBooksWithoutCovers(limit: number = BATCH_SIZE): BookWithoutCover[] {
@@ -58,22 +63,36 @@ function getAllBooksWithoutCovers(limit: number = BATCH_SIZE): BookWithoutCover[
 
 async function fetchCoverForBookEntry(book: BookWithoutCover): Promise<boolean> {
 	const query = `${book.original_title} ${book.authors || ''}`.trim();
-	const results = await searchGoogleBooks(query, 3);
+	const results = await searchGoogleBooks(query, 5);
 
-	// Find the first result whose title actually matches
+	const bookAuthors = normalize(book.authors || '');
+
 	for (const result of results) {
 		if (!result.coverUrl) continue;
-		if (!titleMatches(book.original_title, result.title)) continue;
 
-		getDb()
-			.prepare("UPDATE books SET cover_url = ?, updated_at = datetime('now') WHERE id = ?")
-			.run(result.coverUrl, book.id);
-		log.debug('Cover fetched', { bookId: book.id, title: book.original_title });
-		return true;
+		// Check title match
+		if (titleMatches(book.original_title, result.title, result.authors)) {
+			getDb()
+				.prepare("UPDATE books SET cover_url = ?, updated_at = datetime('now') WHERE id = ?")
+				.run(result.coverUrl, book.id);
+			log.debug('Cover fetched (title match)', { bookId: book.id, title: book.original_title });
+			return true;
+		}
+
+		// If title doesn't match but author does, it might be a translation
+		if (bookAuthors && result.authors.some((a) => bookAuthors.includes(normalize(a)))) {
+			getDb()
+				.prepare("UPDATE books SET cover_url = ?, updated_at = datetime('now') WHERE id = ?")
+				.run(result.coverUrl, book.id);
+			log.debug('Cover fetched (author match)', {
+				bookId: book.id,
+				title: book.original_title,
+				resultTitle: result.title
+			});
+			return true;
+		}
 	}
 
-	// Mark as checked so we don't retry endlessly -- set cover_url to empty string
-	// No, that would show broken images. Instead just skip and log.
 	log.debug('No matching cover found', { bookId: book.id, title: book.original_title });
 	return false;
 }
