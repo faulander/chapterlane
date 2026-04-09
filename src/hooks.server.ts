@@ -43,4 +43,4 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		});
 	});
 
-export const handle: Handle = sequence(handleAuth, handleParaglide);
+export const handle: Handle = sequence(handleParaglide, handleAuth);
