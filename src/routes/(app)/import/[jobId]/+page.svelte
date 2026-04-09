@@ -72,7 +72,7 @@
 		{/each}
 	</div>
 
-	<form method="POST" action="?/confirm" use:enhance>
+	<form method="POST" action="?/confirm">
 		<Button type="submit">{m.import_confirm()}</Button>
 	</form>
 </div>
