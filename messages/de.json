@@ -103,5 +103,12 @@
 	"reading_places_empty": "Noch keine Leseorte.",
 	"reading_place_name": "Name",
 	"reading_place_create": "Ort hinzufügen",
-	"reading_place_delete_confirm": "Diesen Leseort löschen?"
+	"reading_place_delete_confirm": "Diesen Leseort löschen?",
+	"search_title": "Bücher suchen",
+	"search_placeholder": "Nach Titel oder Autor suchen...",
+	"search_no_results": "Keine Bücher gefunden. Versuche eine andere Suche.",
+	"search_add_to_library": "Zur Bibliothek hinzufügen",
+	"search_already_in_library": "In deiner Bibliothek",
+	"search_source_google": "Google Books",
+	"search_source_internal": "Bibliothek"
 }

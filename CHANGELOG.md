@@ -5,6 +5,17 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-04-09
+
+### Added
+
+- Google Books API integration for external book search
+- External search service combining internal FTS and Google Books results
+- Book search page with combined internal/external results
+- Add-from-external flow: creates book, links external ref, adds to library
+- Deduplication via external_book_refs when adding Google Books results
+- i18n messages for search UI in English and German
+
 ## [0.4.0] - 2026-04-09
 
 ### Added

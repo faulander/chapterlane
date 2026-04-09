@@ -103,5 +103,12 @@
 	"reading_places_empty": "No reading places yet.",
 	"reading_place_name": "Name",
 	"reading_place_create": "Add Place",
-	"reading_place_delete_confirm": "Delete this reading place?"
+	"reading_place_delete_confirm": "Delete this reading place?",
+	"search_title": "Search Books",
+	"search_placeholder": "Search by title or author...",
+	"search_no_results": "No books found. Try a different search.",
+	"search_add_to_library": "Add to Library",
+	"search_already_in_library": "In your library",
+	"search_source_google": "Google Books",
+	"search_source_internal": "Library"
 }
