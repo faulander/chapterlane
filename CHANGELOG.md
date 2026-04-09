@@ -5,6 +5,23 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-04-09
+
+### Added
+
+- Import system: migration for import_jobs and import_rows tables
+- CSV parser with quoted field support
+- Goodreads CSV parser with status mapping (to-read/currently-reading/read)
+- StoryGraph CSV parser with status mapping
+- Calibre CSV parser for library exports
+- Import matcher with fuzzy title/author matching via FTS
+- Import service: parse, preview, confirm, batch-execute with transaction safety
+- Import upload page with source selection and file upload
+- Import preview page with accept/skip toggles per row and confidence indicators
+- Import summary page with imported/skipped/error counts
+- Import history list on upload page
+- i18n messages for import UI in English and German
+
 ## [0.5.0] - 2026-04-09
 
 ### Added

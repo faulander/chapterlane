@@ -110,5 +110,21 @@
 	"search_add_to_library": "Add to Library",
 	"search_already_in_library": "In your library",
 	"search_source_google": "Google Books",
-	"search_source_internal": "Library"
+	"search_source_internal": "Library",
+	"import_title": "Import Books",
+	"import_source": "Source",
+	"import_source_goodreads": "Goodreads",
+	"import_source_storygraph": "StoryGraph",
+	"import_source_calibre": "Calibre",
+	"import_upload": "Upload & Parse",
+	"import_select_file": "CSV File",
+	"import_preview_title": "Import Preview",
+	"import_confirm": "Confirm Import",
+	"import_complete": "Import Complete",
+	"import_summary_imported": "Imported",
+	"import_summary_skipped": "Skipped",
+	"import_summary_errors": "Errors",
+	"import_confidence_high": "High match",
+	"import_confidence_low": "Low match",
+	"import_history": "Previous Imports"
 }

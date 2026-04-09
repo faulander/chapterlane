@@ -110,5 +110,21 @@
 	"search_add_to_library": "Zur Bibliothek hinzufügen",
 	"search_already_in_library": "In deiner Bibliothek",
 	"search_source_google": "Google Books",
-	"search_source_internal": "Bibliothek"
+	"search_source_internal": "Bibliothek",
+	"import_title": "Bücher importieren",
+	"import_source": "Quelle",
+	"import_source_goodreads": "Goodreads",
+	"import_source_storygraph": "StoryGraph",
+	"import_source_calibre": "Calibre",
+	"import_upload": "Hochladen & Analysieren",
+	"import_select_file": "CSV-Datei",
+	"import_preview_title": "Import-Vorschau",
+	"import_confirm": "Import bestätigen",
+	"import_complete": "Import abgeschlossen",
+	"import_summary_imported": "Importiert",
+	"import_summary_skipped": "Übersprungen",
+	"import_summary_errors": "Fehler",
+	"import_confidence_high": "Hohe Übereinstimmung",
+	"import_confidence_low": "Niedrige Übereinstimmung",
+	"import_history": "Vorherige Importe"
 }
