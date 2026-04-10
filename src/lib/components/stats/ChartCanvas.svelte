@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Chart, registerables } from 'chart.js';
+	import { onDestroy } from 'svelte';
 
 	interface Props {
 		type: 'bar' | 'line' | 'doughnut' | 'pie';
@@ -10,14 +11,14 @@
 
 	let { type, data, options = {}, class: className = '' }: Props = $props();
 	let canvas: HTMLCanvasElement | undefined = $state();
-	let chart: Chart | undefined = $state();
+	let chart: Chart | undefined;
 
 	Chart.register(...registerables);
 
 	$effect(() => {
 		if (!canvas) return;
 
-		if (chart) chart.destroy();
+		chart?.destroy();
 
 		chart = new Chart(canvas, {
 			type,
@@ -25,13 +26,15 @@
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
+				animation: false,
 				...options
 			}
 		});
+	});
 
-		return () => {
-			chart?.destroy();
-		};
+	onDestroy(() => {
+		chart?.destroy();
+		chart = undefined;
 	});
 </script>
 

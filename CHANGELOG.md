@@ -5,6 +5,30 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-04-10
+
+### Added
+
+- Calibre import: reads directly from metadata.db on the filesystem (no CSV upload needed)
+- Calibre import: auto-detects custom columns, lets user pick reading status column
+- Calibre import: maps custom column values to reading status (EN + DE patterns)
+- Calibre import: imports covers from library filesystem into local storage
+- Calibre import: imports tags as shelves, series as reading lists (with correct order)
+- Calibre import: reads language (ISO 639-3→639-1 mapping), ISBN from identifiers table, pages from custom columns
+- Local cover storage service with API endpoint (`/api/covers/[bookId]`)
+- Book cards show shelves (amber tags) and reading lists (blue tags), both clickable
+- Book cards: author names are clickable, filtering library by that author
+- i18n messages for Calibre import flow (EN + DE)
+
+### Fixed
+
+- Status badges now use i18n translations instead of raw English DB labels
+- Status dropdown on book detail page is translated
+- Statistics: pages read chart now accounts for percent-based progress entries
+- Statistics: Chart.js navigation bug fixed (double-destroy in effect cleanup)
+- Statistics: disabled chart animations for faster rendering
+- Cover fetcher: fixed extra argument in titleMatches call
+
 ## [1.0.1] - 2026-04-09
 
 ### Fixed

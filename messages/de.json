@@ -166,5 +166,16 @@
 	"language_en": "English",
 	"language_de": "Deutsch",
 	"import_covers_auto": "Buchcover werden automatisch im Hintergrund geladen.",
-	"import_in_progress": "Importiere..."
+	"import_in_progress": "Importiere...",
+	"import_calibre_library_path": "Calibre-Bibliothekspfad",
+	"import_calibre_library_path_hint": "Gib den vollständigen Pfad zu deinem Calibre-Bibliotheksordner ein (der Ordner mit metadata.db).",
+	"import_calibre_scan": "Bibliothek scannen",
+	"import_calibre_columns_title": "Calibre-Import — Statusspalte wählen",
+	"import_calibre_status_column": "Lese-Status-Spalte",
+	"import_calibre_status_column_hint": "Wenn du in Calibre eine eigene Spalte hast, die den Lesestatus erfasst, wähle sie hier aus.",
+	"import_calibre_no_status_column": "Keine — alle als Geplant importieren",
+	"import_calibre_detected_columns": "Erkannte benutzerdefinierte Spalten",
+	"import_calibre_sample_values": "Werte",
+	"import_calibre_no_custom_columns": "Keine benutzerdefinierten Spalten mit Werten in dieser Bibliothek gefunden.",
+	"import_calibre_start_import": "Import starten"
 }

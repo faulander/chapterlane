@@ -71,7 +71,7 @@ async function fetchCoverForBookEntry(book: BookWithoutCover): Promise<boolean> 
 		if (!result.coverUrl) continue;
 
 		// Check title match
-		if (titleMatches(book.original_title, result.title, result.authors)) {
+		if (titleMatches(book.original_title, result.title)) {
 			getDb()
 				.prepare("UPDATE books SET cover_url = ?, updated_at = datetime('now') WHERE id = ?")
 				.run(result.coverUrl, book.id);

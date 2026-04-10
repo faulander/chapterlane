@@ -166,5 +166,16 @@
 	"language_en": "English",
 	"language_de": "Deutsch",
 	"import_covers_auto": "Book covers are being fetched automatically in the background.",
-	"import_in_progress": "Importing..."
+	"import_in_progress": "Importing...",
+	"import_calibre_library_path": "Calibre Library Path",
+	"import_calibre_library_path_hint": "Enter the full path to your Calibre library folder (the one containing metadata.db).",
+	"import_calibre_scan": "Scan Library",
+	"import_calibre_columns_title": "Calibre Import — Select Status Column",
+	"import_calibre_status_column": "Reading Status Column",
+	"import_calibre_status_column_hint": "If you have a custom column in Calibre that tracks whether you've read a book, select it here.",
+	"import_calibre_no_status_column": "None — import all as Planned",
+	"import_calibre_detected_columns": "Detected Custom Columns",
+	"import_calibre_sample_values": "Values",
+	"import_calibre_no_custom_columns": "No custom columns with values found in this library.",
+	"import_calibre_start_import": "Start Import"
 }

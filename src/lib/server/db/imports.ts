@@ -27,7 +27,14 @@ export function updateImportJob(
 	data: Partial<
 		Pick<
 			ImportJob,
-			'status' | 'total_rows' | 'matched_rows' | 'imported_rows' | 'error_message' | 'finished_at'
+			| 'status'
+			| 'total_rows'
+			| 'matched_rows'
+			| 'imported_rows'
+			| 'error_message'
+			| 'finished_at'
+			| 'calibre_path'
+			| 'calibre_status_column'
 		>
 	>
 ): void {

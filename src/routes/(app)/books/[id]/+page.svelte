@@ -10,6 +10,21 @@
 	const availableShelves = $derived(
 		data.shelves.filter((s) => !data.bookShelves.some((bs) => bs.id === s.id))
 	);
+
+	const categoryLabels: Record<string, () => string> = {
+		planned: m.status_planned,
+		active: m.status_active,
+		paused: m.status_paused,
+		completed: m.status_completed,
+		dropped: m.status_dropped
+	};
+
+	function statusLabel(status: { label: string; system_category: string | null }): string {
+		if (status.system_category && categoryLabels[status.system_category]) {
+			return categoryLabels[status.system_category]();
+		}
+		return status.label;
+	}
 </script>
 
 <svelte:head>
@@ -64,7 +79,6 @@
 					<StatusBadge
 						category={data.statuses.find((s) => s.id === data.userBook?.current_status_id)
 							?.system_category ?? null}
-						label={data.statuses.find((s) => s.id === data.userBook?.current_status_id)?.label}
 					/>
 
 					<!-- Status selector -->
@@ -75,7 +89,7 @@
 						>
 							{#each data.statuses as status (status.id)}
 								<option value={status.id} selected={status.id === data.userBook?.current_status_id}>
-									{status.label}
+									{statusLabel(status)}
 								</option>
 							{/each}
 						</select>

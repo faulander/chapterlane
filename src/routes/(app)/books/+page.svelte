@@ -90,8 +90,9 @@
 					title={book.display_title}
 					authors={book.authors}
 					coverUrl={book.cover_url}
-					statusLabel={book.status_label}
 					statusCategory={book.system_category}
+					shelvesJson={book.shelves_json}
+					listsJson={book.lists_json}
 				/>
 			{/each}
 		</div>

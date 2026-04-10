@@ -41,6 +41,8 @@ export interface UserBookWithDetails extends UserBook {
 	authors: string;
 	status_label: string | null;
 	system_category: string | null;
+	shelves_json: string | null;
+	lists_json: string | null;
 }
 
 export function getUserBooks(
@@ -57,9 +59,17 @@ export function getUserBooks(
 			b.original_title,
 			COALESCE(btt.translated_title, b.original_title) as display_title,
 			b.cover_url,
-			GROUP_CONCAT(a.name, ', ') as authors,
+			GROUP_CONCAT(DISTINCT a.name) as authors,
 			sd.label as status_label,
-			sd.system_category
+			sd.system_category,
+			(SELECT json_group_array(json_object('id', s.id, 'name', s.name))
+			 FROM shelf_books sb
+			 JOIN shelves s ON s.id = sb.shelf_id
+			 WHERE sb.user_book_id = ub.id) as shelves_json,
+			(SELECT json_group_array(json_object('id', rl.id, 'name', rl.title))
+			 FROM reading_list_items rli
+			 JOIN reading_lists rl ON rl.id = rli.list_id
+			 WHERE rli.book_id = ub.book_id) as lists_json
 		FROM user_books ub
 		JOIN books b ON b.id = ub.book_id
 		LEFT JOIN book_title_translations btt ON btt.book_id = b.id

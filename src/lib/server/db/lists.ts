@@ -85,18 +85,18 @@ export function getListItems(
 	})[];
 }
 
-export function addItemToList(listId: string, bookId: string, note?: string): string {
+export function addItemToList(listId: string, bookId: string, note?: string, position?: number): string {
 	const id = generateId();
-	const maxPos = (
+	const pos = position ?? ((
 		getDb()
 			.prepare('SELECT MAX(position) as max_pos FROM reading_list_items WHERE list_id = ?')
 			.get(listId) as { max_pos: number | null }
-	).max_pos;
+	).max_pos ?? -1) + 1;
 	getDb()
 		.prepare(
 			'INSERT OR IGNORE INTO reading_list_items (id, list_id, book_id, note, position) VALUES (?, ?, ?, ?, ?)'
 		)
-		.run(id, listId, bookId, note || null, (maxPos ?? -1) + 1);
+		.run(id, listId, bookId, note || null, pos);
 	return id;
 }
 

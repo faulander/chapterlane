@@ -170,6 +170,8 @@ export interface ImportJob {
 	started_at: string | null;
 	finished_at: string | null;
 	created_at: string;
+	calibre_path: string | null;
+	calibre_status_column: string | null;
 }
 
 export interface ImportRow {

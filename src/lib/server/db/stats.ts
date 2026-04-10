@@ -22,11 +22,19 @@ export function getPagesReadByMonth(
 ): { month: string; pages: number }[] {
 	return getDb()
 		.prepare(
-			`SELECT strftime('%m', pe.created_at) as month, SUM(pe.page) as pages
+			`SELECT strftime('%m', pe.created_at) as month,
+				SUM(
+					CASE
+						WHEN pe.page IS NOT NULL THEN pe.page
+						WHEN pe.percent IS NOT NULL AND ub.user_total_pages IS NOT NULL
+							THEN CAST(pe.percent * ub.user_total_pages / 100.0 AS INTEGER)
+						ELSE 0
+					END
+				) as pages
 			FROM progress_entries pe
 			JOIN user_books ub ON ub.id = pe.user_book_id
 			WHERE ub.user_id = ? AND strftime('%Y', pe.created_at) = ?
-			AND pe.page IS NOT NULL
+			AND (pe.page IS NOT NULL OR pe.percent IS NOT NULL)
 			GROUP BY month ORDER BY month`
 		)
 		.all(userId, String(year)) as { month: string; pages: number }[];
