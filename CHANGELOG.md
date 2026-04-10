@@ -5,6 +5,14 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-04-10
+
+### Fixed
+
+- Mobile: prevent horizontal overflow on book grid (added `min-w-0` and `overflow-x-hidden` to layout)
+- Mobile: reduced book grid gap for tighter fit on small screens
+- Mobile: bottom nav labels truncate instead of wrapping (fixes "Meine Bücher" overflow in German)
+
 ## [1.1.0] - 2026-04-10
 
 ### Added

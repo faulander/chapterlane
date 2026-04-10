@@ -13,7 +13,7 @@
 	<div class="flex flex-1">
 		<SideBar />
 
-		<main class="flex-1 pb-16 md:pb-0">
+		<main class="min-w-0 flex-1 overflow-x-hidden pb-16 md:pb-0">
 			<div class="mx-auto max-w-5xl px-4 py-6">
 				{@render children()}
 			</div>

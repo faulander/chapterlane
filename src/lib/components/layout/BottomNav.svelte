@@ -30,7 +30,7 @@
 					{isActive(item.href) ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}"
 			>
 				<item.icon size="20" />
-				<span>{item.label}</span>
+				<span class="w-full truncate text-center">{item.label}</span>
 			</a>
 		{/each}
 	</div>

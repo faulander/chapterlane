@@ -53,7 +53,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow dark:border-gray-800 dark:bg-gray-900"
+	class="min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow dark:border-gray-800 dark:bg-gray-900"
 	role="group"
 >
 	<a href={bookHref} class="group block">
