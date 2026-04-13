@@ -57,9 +57,9 @@ export function logProgress(
 	// Emit activity events
 	const book = getBookById(userBook.book_id);
 	if (book) {
-		emitProgressLogged(userBook.user_id, input.userBookId, book.original_title, page, percent);
+		emitProgressLogged(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, page, percent);
 		if (percent !== null) {
-			emitProgressMilestone(userBook.user_id, input.userBookId, book.original_title, percent);
+			emitProgressMilestone(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, percent);
 		}
 	}
 

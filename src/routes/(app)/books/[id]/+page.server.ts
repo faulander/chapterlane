@@ -58,6 +58,7 @@ export const actions: Actions = {
 		const book = getBookById(params.id);
 		if (book && userBookId) {
 			emitEvent(user.id, 'book_added', 'user_book', userBookId, 'public', {
+				book_id: params.id,
 				book_title: book.original_title
 			});
 		}
@@ -84,12 +85,13 @@ export const actions: Actions = {
 		if (status && book) {
 			if (status.system_category === 'active') {
 				emitEvent(user.id, 'book_started', 'user_book', userBook.id, 'public', {
+					book_id: params.id,
 					book_title: book.original_title
 				});
 			} else if (status.system_category === 'completed') {
-				emitBookCompleted(user.id, userBook.id, book.original_title);
+				emitBookCompleted(user.id, userBook.id, params.id, book.original_title);
 			} else {
-				emitStatusChanged(user.id, userBook.id, book.original_title, status.label);
+				emitStatusChanged(user.id, userBook.id, params.id, book.original_title, status.label);
 			}
 		}
 	},

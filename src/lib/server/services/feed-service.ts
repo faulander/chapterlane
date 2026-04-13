@@ -25,17 +25,25 @@ export function emitEvent(
 export function emitStatusChanged(
 	actorId: string,
 	userBookId: string,
+	bookId: string,
 	bookTitle: string,
 	statusLabel: string
 ): void {
 	emitEvent(actorId, 'status_changed', 'user_book', userBookId, 'friends', {
+		book_id: bookId,
 		book_title: bookTitle,
 		status_label: statusLabel
 	});
 }
 
-export function emitBookCompleted(actorId: string, userBookId: string, bookTitle: string): void {
+export function emitBookCompleted(
+	actorId: string,
+	userBookId: string,
+	bookId: string,
+	bookTitle: string
+): void {
 	emitEvent(actorId, 'book_completed', 'user_book', userBookId, 'friends', {
+		book_id: bookId,
 		book_title: bookTitle
 	});
 }
@@ -43,11 +51,13 @@ export function emitBookCompleted(actorId: string, userBookId: string, bookTitle
 export function emitProgressLogged(
 	actorId: string,
 	userBookId: string,
+	bookId: string,
 	bookTitle: string,
 	page: number | null,
 	percent: number | null
 ): void {
 	emitEvent(actorId, 'progress_logged', 'user_book', userBookId, 'public', {
+		book_id: bookId,
 		book_title: bookTitle,
 		page,
 		percent
@@ -57,6 +67,7 @@ export function emitProgressLogged(
 export function emitProgressMilestone(
 	actorId: string,
 	userBookId: string,
+	bookId: string,
 	bookTitle: string,
 	percent: number
 ): void {
@@ -66,6 +77,7 @@ export function emitProgressMilestone(
 	if (!milestone) return;
 
 	emitEvent(actorId, 'progress_milestone', 'user_book', userBookId, 'friends', {
+		book_id: bookId,
 		book_title: bookTitle,
 		percent: milestone
 	});

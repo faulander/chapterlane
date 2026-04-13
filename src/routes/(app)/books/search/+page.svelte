@@ -6,7 +6,8 @@
 	import Button from '$lib/components/ui/Button.svelte';
 
 	let { data } = $props();
-	let query = $state(data.query);
+	let title = $state(data.title);
+	let author = $state(data.author);
 </script>
 
 <svelte:head>
@@ -16,27 +17,43 @@
 <div class="space-y-6">
 	<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.search_title()}</h1>
 
-	<form action={href('/books/search')} method="GET" class="flex gap-2">
+	<form action={href('/books/search')} method="GET" class="flex flex-col gap-2 sm:flex-row">
 		<div class="relative flex-1">
 			<Search size="18" class="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
 			<input
-				name="q"
+				name="title"
 				type="text"
-				bind:value={query}
-				placeholder={m.search_placeholder()}
+				bind:value={title}
+				placeholder={m.search_title_placeholder()}
 				class="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
 			/>
 		</div>
+		<input
+			name="author"
+			type="text"
+			bind:value={author}
+			placeholder={m.search_author_placeholder()}
+			class="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none sm:w-48 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
+		/>
 		<Button type="submit">{m.search_title()}</Button>
 	</form>
 
-	{#if data.query && data.results.length === 0}
+	{#if (data.title || data.author) && data.results.length === 0}
 		<div
 			class="rounded-lg border border-gray-200 bg-white p-8 text-center dark:border-gray-800 dark:bg-gray-900"
 		>
 			<p class="text-gray-500 dark:text-gray-400">{m.search_no_results()}</p>
 		</div>
 	{/if}
+
+	<p class="text-sm text-gray-500 dark:text-gray-400">
+		<a
+			href={href('/books/add')}
+			class="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+		>
+			{m.search_add_manually()}
+		</a>
+	</p>
 
 	{#if data.results.length > 0}
 		<div class="space-y-3">
@@ -59,7 +76,7 @@
 					{/if}
 
 					<div class="flex-1 space-y-1">
-						{#if result.inCatalog && result.existingBookId}
+						{#if result.inLibrary && result.existingBookId}
 							<a
 								href={href(`/books/${result.existingBookId}`)}
 								class="font-medium text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
@@ -94,7 +111,7 @@
 									: m.search_source_google()}
 							</span>
 
-							{#if result.inCatalog}
+							{#if result.inLibrary}
 								<span class="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
 									<Check size="14" />
 									{m.search_already_in_library()}
@@ -107,6 +124,7 @@
 									<input type="hidden" name="description" value={result.description ?? ''} />
 									<input type="hidden" name="cover_url" value={result.coverUrl ?? ''} />
 									<input type="hidden" name="external_id" value={result.externalId ?? ''} />
+									<input type="hidden" name="existing_book_id" value={result.existingBookId ?? ''} />
 									<input type="hidden" name="source" value="google_books" />
 									<Button type="submit" size="sm" variant="secondary">
 										<Plus size="14" class="mr-1" />

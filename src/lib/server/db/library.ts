@@ -45,11 +45,14 @@ export interface UserBookWithDetails extends UserBook {
 	lists_json: string | null;
 }
 
+export type BookSortOption = 'added_desc' | 'added_asc' | 'title_asc' | 'title_desc' | 'author_asc' | 'author_desc';
+
 export function getUserBooks(
 	userId: string,
 	options: {
 		statusCategory?: string;
 		search?: string;
+		sort?: BookSortOption;
 		limit?: number;
 		offset?: number;
 	} = {}
@@ -93,7 +96,17 @@ export function getUserBooks(
 		params.push(pattern, pattern);
 	}
 
-	sql += ' GROUP BY ub.id ORDER BY ub.updated_at DESC';
+	sql += ' GROUP BY ub.id';
+
+	const sortMap: Record<BookSortOption, string> = {
+		added_desc: 'ub.created_at DESC',
+		added_asc: 'ub.created_at ASC',
+		title_asc: 'display_title ASC',
+		title_desc: 'display_title DESC',
+		author_asc: 'authors ASC',
+		author_desc: 'authors DESC'
+	};
+	sql += ` ORDER BY ${sortMap[options.sort || 'added_desc']}`;
 
 	if (options.limit) {
 		sql += ' LIMIT ?';

@@ -42,18 +42,19 @@ const FEED_SELECT = `
 	SELECT ae.*,
 		u.username as actor_username,
 		u.display_name as actor_display_name,
-		ub.book_id as book_id,
-		COALESCE(btt.translated_title, b.original_title) as book_title,
-		b.cover_url as book_cover_url,
+		COALESCE(ub.book_id, json_extract(ae.payload_json, '$.book_id')) as book_id,
+		COALESCE(btt.translated_title, b.original_title, b2.original_title) as book_title,
+		COALESCE(b.cover_url, b2.cover_url) as book_cover_url,
 		rl.title as series_name,
 		rli.position as series_position
 	FROM activity_events ae
 	JOIN users u ON u.id = ae.actor_user_id
 	LEFT JOIN user_books ub ON ub.id = ae.object_id AND ae.object_type = 'user_book'
 	LEFT JOIN books b ON b.id = ub.book_id
-	LEFT JOIN book_title_translations btt ON btt.book_id = b.id
+	LEFT JOIN books b2 ON b2.id = json_extract(ae.payload_json, '$.book_id') AND ub.book_id IS NULL
+	LEFT JOIN book_title_translations btt ON btt.book_id = COALESCE(ub.book_id, json_extract(ae.payload_json, '$.book_id'))
 		AND btt.language_code = (SELECT preferred_language FROM users WHERE id = ae.actor_user_id)
-	LEFT JOIN reading_list_items rli ON rli.book_id = ub.book_id
+	LEFT JOIN reading_list_items rli ON rli.book_id = COALESCE(ub.book_id, json_extract(ae.payload_json, '$.book_id'))
 	LEFT JOIN reading_lists rl ON rl.id = rli.list_id AND rl.user_id = ae.actor_user_id
 `;
 

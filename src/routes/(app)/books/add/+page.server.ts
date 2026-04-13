@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { addBook } from '$lib/server/services/book-service';
 import { addBookToLibrary } from '$lib/server/db/library';
 import { validateRequired } from '$lib/server/utils/validation';
+import { fetchCoverForBook } from '$lib/server/services/cover-fetcher';
 
 export const load: PageServerLoad = async () => {
 	return {};
@@ -41,6 +42,10 @@ export const actions: Actions = {
 		});
 
 		addBookToLibrary(user.id, bookId);
+
+		if (!coverUrl.trim()) {
+			fetchCoverForBook(bookId);
+		}
 
 		throw redirect(302, `/books/${bookId}`);
 	}

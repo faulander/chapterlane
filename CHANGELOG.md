@@ -5,6 +5,25 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2026-04-13
+
+### Added
+
+- Library sort: sort books by title, author, or date added (ascending/descending)
+- Book search: separate title and author fields for precise Google Books queries (uses `intitle:`/`inauthor:` API qualifiers)
+- Auto cover fetch: immediately fetches cover from Google Books when a book is added without one
+- "Add Book" button now goes to search page; manual add available as secondary link
+- New activity event types: `book_added`, `book_started` with book_id in all event payloads
+
+### Fixed
+
+- Activity feed survives book deletion: feed query falls back to payload `book_id` when `user_books` row is gone
+- Search "In your library" now checks user's actual library, not just catalog existence
+- Re-adding a previously deleted book no longer creates duplicates
+- Google Books cover applied to existing catalog books that lack one on re-add
+- Search deduplicates internal and Google results by title, enriches internal results with Google cover/description
+- Source badge shows "Database"/"Datenbank" instead of misleading "Library"
+
 ## [1.2.0] - 2026-04-13
 
 ### Added
