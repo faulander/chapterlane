@@ -31,7 +31,31 @@ export function createActivityEvent(data: {
 export interface FeedEvent extends ActivityEvent {
 	actor_username: string;
 	actor_display_name: string | null;
+	book_id: string | null;
+	book_title: string | null;
+	book_cover_url: string | null;
+	series_name: string | null;
+	series_position: number | null;
 }
+
+const FEED_SELECT = `
+	SELECT ae.*,
+		u.username as actor_username,
+		u.display_name as actor_display_name,
+		ub.book_id as book_id,
+		COALESCE(btt.translated_title, b.original_title) as book_title,
+		b.cover_url as book_cover_url,
+		rl.title as series_name,
+		rli.position as series_position
+	FROM activity_events ae
+	JOIN users u ON u.id = ae.actor_user_id
+	LEFT JOIN user_books ub ON ub.id = ae.object_id AND ae.object_type = 'user_book'
+	LEFT JOIN books b ON b.id = ub.book_id
+	LEFT JOIN book_title_translations btt ON btt.book_id = b.id
+		AND btt.language_code = (SELECT preferred_language FROM users WHERE id = ae.actor_user_id)
+	LEFT JOIN reading_list_items rli ON rli.book_id = ub.book_id
+	LEFT JOIN reading_lists rl ON rl.id = rli.list_id AND rl.user_id = ae.actor_user_id
+`;
 
 export function getFeedForUser(
 	userId: string,
@@ -40,9 +64,7 @@ export function getFeedForUser(
 ): FeedEvent[] {
 	return getDb()
 		.prepare(
-			`SELECT ae.*, u.username as actor_username, u.display_name as actor_display_name
-			FROM activity_events ae
-			JOIN users u ON u.id = ae.actor_user_id
+			`${FEED_SELECT}
 			JOIN friendships f ON f.friend_user_id = ae.actor_user_id AND f.user_id = ?
 			WHERE ae.visibility IN ('friends', 'public')
 			AND ae.actor_user_id NOT IN (SELECT blocked_user_id FROM blocks WHERE blocker_user_id = ?)
@@ -55,9 +77,7 @@ export function getFeedForUser(
 export function getUserEvents(userId: string, limit: number = 20): FeedEvent[] {
 	return getDb()
 		.prepare(
-			`SELECT ae.*, u.username as actor_username, u.display_name as actor_display_name
-			FROM activity_events ae
-			JOIN users u ON u.id = ae.actor_user_id
+			`${FEED_SELECT}
 			WHERE ae.actor_user_id = ?
 			ORDER BY ae.created_at DESC LIMIT ?`
 		)

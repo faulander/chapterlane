@@ -1,42 +1,96 @@
-# sv
+# ChapterLane
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A social reading tracker and personal library app. Track what you read, organize books with shelves and lists, log reading progress, connect with friends, and explore your reading statistics.
 
-## Creating a project
+Inspired by Goodreads, StoryGraph, and Calibre — built for readers who want a cleaner, more flexible, multilingual experience.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
+
+- **Library management** — add books manually or via Google Books search, organize with custom shelves and reading lists
+- **Reading progress** — track pages/percent, log reading sessions with notes and reading places
+- **Custom statuses** — define your own reading statuses beyond the defaults (planned, active, paused, completed, dropped)
+- **Activity feed** — see your own activity and your friends' updates (progress milestones, status changes, completions)
+- **Social** — add friends, share activity, view profiles with privacy controls
+- **Import** — bring your library from Goodreads (CSV), StoryGraph (CSV), or Calibre (direct DB import with covers, tags, and series)
+- **Statistics** — charts for books/pages by month, by language, by status, by reading place, top authors
+- **Multilingual** — full English and German support via Paraglide i18n
+- **Dark mode** — system-aware with manual toggle
+
+## Tech Stack
+
+- [SvelteKit](https://svelte.dev) (Svelte 5, runes mode)
+- [Bun](https://bun.sh) runtime
+- SQLite via `bun:sqlite`
+- [Tailwind CSS](https://tailwindcss.com)
+- [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for i18n
+- [Chart.js](https://www.chartjs.org) for statistics
+- [svelte-lucide](https://github.com/shinokada/svelte-lucide) for icons
+
+## Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh) >= 1.0
+
+### Install
 
 ```sh
-# create a new project
-npx sv create my-app
+git clone <repo-url> chapterlane
+cd chapterlane
+bun install
 ```
 
-To recreate this project with the same configuration:
+### Configure
+
+Copy the example env file and set your values:
 
 ```sh
-# recreate this project
-bun x sv@0.15.0 create --template minimal --types ts --add tailwindcss="plugins:typography,forms" paraglide="languageTags:en, de+demo:yes" prettier eslint vitest="usages:unit,component" playwright sveltekit-adapter="adapter:node" mcp="ide:claude-code+setup:local" --install bun .
+cp .env.example .env
 ```
 
-## Developing
+| Variable | Description | Default |
+|---|---|---|
+| `DATABASE_PATH` | SQLite database location | `data/chapterlane.db` |
+| `LOG_LEVEL` | Logging level | `debug` |
+| `GOOGLE_BOOKS_API_KEY` | Google Books API key (for search) | — |
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Run
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun run dev
 ```
 
-## Building
+The app will be available at `http://localhost:5173`. The database and tables are created automatically on first run.
 
-To create a production version of your app:
+### Build for Production
 
 ```sh
-npm run build
+bun run build
+bun run preview
 ```
 
-You can preview the production build with `npm run preview`.
+Uses the SvelteKit Node adapter.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Project Structure
+
+```
+src/
+  lib/
+    components/    # Reusable UI components (BookCard, Button, StatusBadge, etc.)
+    paraglide/     # Generated i18n messages
+    server/
+      db/          # SQLite queries and migrations
+      services/    # Business logic (progress, feed, import, covers)
+      utils/       # Logger, crypto helpers
+    types.ts       # Shared TypeScript interfaces
+    utils/         # Client-side utilities
+  routes/
+    (app)/         # Authenticated app routes (dashboard, books, reading, etc.)
+    (auth)/        # Login and registration
+messages/          # i18n message files (en.json, de.json)
+data/              # SQLite database (created at runtime)
+```
+
+## License
+
+Private.

@@ -18,6 +18,8 @@ import {
 import { getProgressHistory } from '$lib/server/db/progress';
 import { getUserReadingPlaces } from '$lib/server/db/reading-places';
 import { logProgress } from '$lib/server/services/progress-service';
+import { emitStatusChanged, emitBookCompleted, emitEvent } from '$lib/server/services/feed-service';
+import { getBookById } from '$lib/server/db/books';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const user = locals.user!;
@@ -52,7 +54,13 @@ export const actions: Actions = {
 		const user = locals.user!;
 		const existing = getUserBook(user.id, params.id);
 		if (existing) return fail(400, { error: 'Already in library' });
-		addBookToLibrary(user.id, params.id);
+		const userBookId = addBookToLibrary(user.id, params.id);
+		const book = getBookById(params.id);
+		if (book && userBookId) {
+			emitEvent(user.id, 'book_added', 'user_book', userBookId, 'public', {
+				book_title: book.original_title
+			});
+		}
 	},
 
 	removeFromLibrary: async ({ params, locals }) => {
@@ -70,6 +78,20 @@ export const actions: Actions = {
 		if (!userBook) return fail(400, { error: 'Book not in library' });
 
 		setBookStatus(userBook.id, statusId);
+
+		const status = getStatusesForUser(user.id).find((s) => s.id === statusId);
+		const book = getBookById(params.id);
+		if (status && book) {
+			if (status.system_category === 'active') {
+				emitEvent(user.id, 'book_started', 'user_book', userBook.id, 'public', {
+					book_title: book.original_title
+				});
+			} else if (status.system_category === 'completed') {
+				emitBookCompleted(user.id, userBook.id, book.original_title);
+			} else {
+				emitStatusChanged(user.id, userBook.id, book.original_title, status.label);
+			}
+		}
 	},
 
 	updateDates: async ({ request, params, locals }) => {

@@ -1,7 +1,9 @@
 import { createLogger } from '../utils/logger';
 import { createProgressEntry } from '../db/progress';
 import { getUserBookById, updateUserBook } from '../db/library';
+import { getBookById } from '../db/books';
 import { getStatusById } from '../db/statuses';
+import { emitProgressLogged, emitProgressMilestone } from './feed-service';
 
 const log = createLogger('progress');
 
@@ -51,6 +53,15 @@ export function logProgress(
 		current_page: page ?? userBook.current_page,
 		current_percent: percent ?? userBook.current_percent
 	});
+
+	// Emit activity events
+	const book = getBookById(userBook.book_id);
+	if (book) {
+		emitProgressLogged(userBook.user_id, input.userBookId, book.original_title, page, percent);
+		if (percent !== null) {
+			emitProgressMilestone(userBook.user_id, input.userBookId, book.original_title, percent);
+		}
+	}
 
 	log.info('Progress logged', {
 		userBookId: input.userBookId,

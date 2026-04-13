@@ -17,9 +17,10 @@
 		statusCategory?: string | null;
 		shelvesJson?: string | null;
 		listsJson?: string | null;
+		currentPercent?: number | null;
 	}
 
-	let { bookId, title, authors, coverUrl, statusCategory, shelvesJson, listsJson }: Props =
+	let { bookId, title, authors, coverUrl, statusCategory, shelvesJson, listsJson, currentPercent }: Props =
 		$props();
 
 	function parseTagItems(json: string | null | undefined): TagItem[] {
@@ -72,6 +73,14 @@
 			</h3>
 			{#if statusCategory}
 				<StatusBadge category={statusCategory} />
+			{/if}
+			{#if currentPercent != null}
+				<div class="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+					<div
+						class="h-full rounded-full bg-indigo-500"
+						style="width: {Math.min(currentPercent, 100)}%"
+					></div>
+				</div>
 			{/if}
 		</div>
 	</a>

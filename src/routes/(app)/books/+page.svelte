@@ -93,6 +93,7 @@
 					statusCategory={book.system_category}
 					shelvesJson={book.shelves_json}
 					listsJson={book.lists_json}
+					currentPercent={book.current_percent}
 				/>
 			{/each}
 		</div>

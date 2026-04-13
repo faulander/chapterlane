@@ -5,6 +5,22 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-04-13
+
+### Added
+
+- Dashboard activity feed: shows own activity when no friends are connected (fallback from friend feed)
+- Activity events for all progress updates, status changes, book additions, and reading starts
+- Feed cards show book cover, title, series name/number, and relative timestamps
+- Descriptive feed messages: "read to page 42", "is 66% through", "started reading this", "finished this book", "added this to the library"
+- Progress bar on BookCard component (visible in library grid for books with progress)
+- i18n messages for all new feed event types (EN + DE)
+
+### Fixed
+
+- Activity events were defined but never emitted — wired up progress logging, status changes, book additions
+- Feed queries now join book data (cover, translated title, series) instead of relying solely on payload JSON
+
 ## [1.1.1] - 2026-04-10
 
 ### Fixed

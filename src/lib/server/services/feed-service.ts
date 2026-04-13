@@ -40,6 +40,20 @@ export function emitBookCompleted(actorId: string, userBookId: string, bookTitle
 	});
 }
 
+export function emitProgressLogged(
+	actorId: string,
+	userBookId: string,
+	bookTitle: string,
+	page: number | null,
+	percent: number | null
+): void {
+	emitEvent(actorId, 'progress_logged', 'user_book', userBookId, 'public', {
+		book_title: bookTitle,
+		page,
+		percent
+	});
+}
+
 export function emitProgressMilestone(
 	actorId: string,
 	userBookId: string,
