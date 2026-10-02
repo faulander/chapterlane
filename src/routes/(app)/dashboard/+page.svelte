@@ -2,6 +2,7 @@
 	import { BookOpen } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
+	import BookCard from '$lib/components/books/BookCard.svelte';
 
 	let { data } = $props();
 
@@ -68,6 +69,46 @@
 		{m.dashboard_welcome({ name: data.user.display_name || data.user.username })}
 	</h1>
 
+	<section class="space-y-3">
+		<div class="flex items-center justify-between gap-3">
+			<h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
+				{m.status_active()}
+			</h2>
+			<a
+				href={href('/books?status=active')}
+				class="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+			>
+				{m.my_books_title()}
+			</a>
+		</div>
+
+		{#if data.activeBooks.length === 0}
+			<div
+				class="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"
+			>
+				<p class="text-gray-600 dark:text-gray-400">{m.currently_reading_empty()}</p>
+			</div>
+		{:else}
+			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+				{#each data.activeBooks as book (book.id)}
+					<BookCard
+						bookId={book.book_id}
+						title={book.display_title}
+						authors={book.authors}
+						coverUrl={book.cover_url}
+						statusCategory={book.system_category}
+						shelvesJson={book.shelves_json}
+						listsJson={book.lists_json}
+						currentPercent={book.current_percent}
+						statuses={data.statuses}
+						currentStatusId={book.current_status_id}
+						hasTotalPages={!!book.user_total_pages}
+					/>
+				{/each}
+			</div>
+		{/if}
+	</section>
+
 	{#if data.ownFeed}
 		<h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
 			{m.feed_own_activity()}
@@ -104,22 +145,16 @@
 					<div class="min-w-0 flex-1">
 						<div class="flex items-start justify-between gap-2">
 							<div class="min-w-0">
-								<h3
-									class="truncate text-sm font-semibold text-gray-900 dark:text-white"
-								>
+								<h3 class="truncate text-sm font-semibold text-gray-900 dark:text-white">
 									{event.book_title || '?'}
 								</h3>
 								{#if event.series_name}
 									<p class="truncate text-xs text-gray-500 dark:text-gray-400">
-										{event.series_name}{event.series_position
-											? ` #${event.series_position}`
-											: ''}
+										{event.series_name}{event.series_position ? ` #${event.series_position}` : ''}
 									</p>
 								{/if}
 							</div>
-							<span
-								class="shrink-0 text-xs text-gray-400 dark:text-gray-500"
-							>
+							<span class="shrink-0 text-xs text-gray-400 dark:text-gray-500">
 								{timeAgo(event.created_at)}
 							</span>
 						</div>

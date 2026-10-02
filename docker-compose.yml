@@ -1,0 +1,22 @@
+services:
+  chapterlane:
+    build: .
+    image: chapterlane:latest
+    container_name: chapterlane
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      ORIGIN: ${APP_ORIGIN:-http://192.168.42.167:3002}
+      PROTOCOL_HEADER: x-forwarded-proto
+      HOST_HEADER: x-forwarded-host
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      DATABASE_PATH: /app/data/chapterlane.db
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      GOOGLE_BOOKS_API_KEY: ${GOOGLE_BOOKS_API_KEY:-}
+    ports:
+      - "${CHAPTERLANE_PORT:-3002}:3000"
+    volumes:
+      - ./data:/app/data
+      - ${CALIBRE_LIBRARY_PATH:-/mnt/HD2/BACKUP/CALIBRE_BOOKS}:/mnt/HD2/BACKUP/CALIBRE_BOOKS:ro

@@ -73,14 +73,38 @@ export const actions: Actions = {
 		const user = locals.user!;
 		const data = await request.formData();
 		const statusId = data.get('status_id') as string;
+		const totalPages = data.get('total_pages') as string;
 		if (!statusId) return fail(400, { error: 'Status is required' });
 
 		const userBook = getUserBook(user.id, params.id);
 		if (!userBook) return fail(400, { error: 'Book not in library' });
 
+		const status = getStatusesForUser(user.id).find((s) => s.id === statusId);
+		if (!status) return fail(400, { error: 'Invalid status' });
+
+		let userTotalPages = userBook.user_total_pages;
+		if (totalPages) {
+			const parsedTotalPages = Number(totalPages);
+			if (!Number.isInteger(parsedTotalPages) || parsedTotalPages < 1) {
+				return fail(400, { error: 'Page count must be a positive number' });
+			}
+			userTotalPages = parsedTotalPages;
+			updateUserBook(userBook.id, { user_total_pages: parsedTotalPages });
+		}
+
+		if (status.system_category !== 'planned' && !userTotalPages) {
+			return fail(400, { error: 'Page count is required for books that are not planned' });
+		}
+
 		setBookStatus(userBook.id, statusId);
 
-		const status = getStatusesForUser(user.id).find((s) => s.id === statusId);
+		const today = new Date().toISOString().slice(0, 10);
+		if (status.system_category === 'active' && !userBook.started_at) {
+			updateUserBook(userBook.id, { started_at: today });
+		} else if (status.system_category === 'completed' && !userBook.finished_at) {
+			updateUserBook(userBook.id, { finished_at: today });
+		}
+
 		const book = getBookById(params.id);
 		if (status && book) {
 			if (status.system_category === 'active') {
@@ -150,9 +174,21 @@ export const actions: Actions = {
 		const userBook = getUserBook(user.id, params.id);
 		if (!userBook) return fail(400, { error: 'Book not in library' });
 
-		updateUserBook(userBook.id, {
-			user_total_pages: totalPages ? parseInt(totalPages, 10) : null
-		});
+		const status = getStatusesForUser(user.id).find((s) => s.id === userBook.current_status_id);
+		if (!totalPages) {
+			if (status?.system_category !== 'planned') {
+				return fail(400, { error: 'Page count is required for books that are not planned' });
+			}
+			updateUserBook(userBook.id, { user_total_pages: null });
+			return;
+		}
+
+		const parsedTotalPages = Number(totalPages);
+		if (!Number.isInteger(parsedTotalPages) || parsedTotalPages < 1) {
+			return fail(400, { error: 'Page count must be a positive number' });
+		}
+
+		updateUserBook(userBook.id, { user_total_pages: parsedTotalPages });
 	},
 
 	removeFromShelf: async ({ request, params, locals }) => {

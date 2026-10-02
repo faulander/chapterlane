@@ -70,15 +70,16 @@ export function emitProgressMilestone(
 	bookId: string,
 	bookTitle: string,
 	percent: number
-): void {
+): boolean {
 	// Only emit at 25%, 50%, 75%, 100%
 	const milestones = [25, 50, 75, 100];
 	const milestone = milestones.find((m) => percent >= m && percent < m + 5);
-	if (!milestone) return;
+	if (!milestone) return false;
 
 	emitEvent(actorId, 'progress_milestone', 'user_book', userBookId, 'friends', {
 		book_id: bookId,
 		book_title: bookTitle,
 		percent: milestone
 	});
+	return true;
 }

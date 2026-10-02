@@ -5,6 +5,8 @@ import {
 	getBooksByLanguage,
 	getBooksByStatus,
 	getTopAuthors,
+	AUTHOR_SCOPES,
+	type AuthorScope,
 	getAveragePages,
 	getActiveReadsCount,
 	getBooksByReadingPlace
@@ -14,6 +16,8 @@ import { getUserBookCount } from '$lib/server/db/library';
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const user = locals.user!;
 	const year = parseInt(url.searchParams.get('year') || String(new Date().getFullYear()), 10);
+	const requestedScope = url.searchParams.get('authors') as AuthorScope;
+	const authorScope = AUTHOR_SCOPES.includes(requestedScope) ? requestedScope : 'read';
 
 	return {
 		year,
@@ -24,7 +28,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		pagesReadByMonth: getPagesReadByMonth(user.id, year),
 		byLanguage: getBooksByLanguage(user.id),
 		byStatus: getBooksByStatus(user.id),
-		topAuthors: getTopAuthors(user.id),
+		authorScope,
+		topAuthors: getTopAuthors(user.id, authorScope),
 		byReadingPlace: getBooksByReadingPlace(user.id)
 	};
 };

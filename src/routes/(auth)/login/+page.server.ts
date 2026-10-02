@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { login } from '$lib/server/services/auth-service';
 import { validateEmail, validatePassword } from '$lib/server/utils/validation';
+import { shouldUseSecureCookies } from '$lib/server/utils/cookies';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) throw redirect(302, '/dashboard');
@@ -35,7 +36,7 @@ export const actions: Actions = {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
+			secure: shouldUseSecureCookies(),
 			expires: result.data.expiresAt
 		});
 

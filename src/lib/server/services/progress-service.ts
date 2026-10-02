@@ -54,12 +54,15 @@ export function logProgress(
 		current_percent: percent ?? userBook.current_percent
 	});
 
-	// Emit activity events
+	// Emit activity events (milestone takes priority over generic progress_logged to avoid duplicates)
 	const book = getBookById(userBook.book_id);
 	if (book) {
-		emitProgressLogged(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, page, percent);
+		let milestoneEmitted = false;
 		if (percent !== null) {
-			emitProgressMilestone(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, percent);
+			milestoneEmitted = emitProgressMilestone(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, percent);
+		}
+		if (!milestoneEmitted) {
+			emitProgressLogged(userBook.user_id, input.userBookId, userBook.book_id, book.original_title, page, percent);
 		}
 	}
 

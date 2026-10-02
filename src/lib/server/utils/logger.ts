@@ -1,5 +1,13 @@
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
+export interface LogRecord {
+	timestamp: string;
+	level: LogLevel;
+	module: string;
+	message: string;
+	data?: unknown;
+}
+
 const LEVELS: Record<LogLevel, number> = {
 	debug: 0,
 	info: 1,
@@ -9,35 +17,37 @@ const LEVELS: Record<LogLevel, number> = {
 
 const currentLevel: LogLevel = (process.env.LOG_LEVEL as LogLevel) || 'debug';
 
+let sink: ((record: LogRecord) => void) | null = null;
+
+/** Registers a persistence target for every record that passes LOG_LEVEL. */
+export function setLogSink(next: ((record: LogRecord) => void) | null): void {
+	sink = next;
+}
+
 function shouldLog(level: LogLevel): boolean {
 	return LEVELS[level] >= LEVELS[currentLevel];
 }
 
-function timestamp(): string {
-	return new Date().toISOString();
-}
-
-function formatMessage(level: LogLevel, module: string, message: string, data?: unknown): string {
-	const base = `[${timestamp()}] [${level.toUpperCase()}] [${module}] ${message}`;
-	if (data !== undefined) {
-		return `${base} ${JSON.stringify(data)}`;
-	}
-	return base;
+function emit(level: LogLevel, module: string, message: string, data?: unknown): string {
+	const record: LogRecord = { timestamp: new Date().toISOString(), level, module, message, data };
+	sink?.(record);
+	const base = `[${record.timestamp}] [${level.toUpperCase()}] [${module}] ${message}`;
+	return data !== undefined ? `${base} ${JSON.stringify(data)}` : base;
 }
 
 export function createLogger(module: string) {
 	return {
 		debug(message: string, data?: unknown) {
-			if (shouldLog('debug')) console.debug(formatMessage('debug', module, message, data));
+			if (shouldLog('debug')) console.debug(emit('debug', module, message, data));
 		},
 		info(message: string, data?: unknown) {
-			if (shouldLog('info')) console.info(formatMessage('info', module, message, data));
+			if (shouldLog('info')) console.info(emit('info', module, message, data));
 		},
 		warn(message: string, data?: unknown) {
-			if (shouldLog('warn')) console.warn(formatMessage('warn', module, message, data));
+			if (shouldLog('warn')) console.warn(emit('warn', module, message, data));
 		},
 		error(message: string, data?: unknown) {
-			if (shouldLog('error')) console.error(formatMessage('error', module, message, data));
+			if (shouldLog('error')) console.error(emit('error', module, message, data));
 		}
 	};
 }

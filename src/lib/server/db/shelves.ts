@@ -41,12 +41,23 @@ export function getUserShelves(userId: string): Shelf[] {
 
 export interface ShelfWithCount extends Shelf {
 	book_count: number;
+	cover_urls_json: string | null;
 }
 
 export function getUserShelvesWithCounts(userId: string): ShelfWithCount[] {
 	return getDb()
 		.prepare(
-			`SELECT s.*, COUNT(sb.user_book_id) as book_count
+			`SELECT s.*, COUNT(sb.user_book_id) as book_count,
+				(SELECT json_group_array(cover_url)
+				 FROM (
+					 SELECT b.cover_url
+					 FROM shelf_books preview_sb
+					 JOIN user_books ub ON ub.id = preview_sb.user_book_id
+					 JOIN books b ON b.id = ub.book_id
+					 WHERE preview_sb.shelf_id = s.id AND b.cover_url IS NOT NULL
+					 ORDER BY preview_sb.added_at DESC
+					 LIMIT 4
+				 )) as cover_urls_json
 			FROM shelves s
 			LEFT JOIN shelf_books sb ON sb.shelf_id = s.id
 			WHERE s.user_id = ?

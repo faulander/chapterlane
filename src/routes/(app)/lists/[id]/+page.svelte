@@ -3,8 +3,16 @@
 	import { BookOpen, X } from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
+	import StatusBadge from '$lib/components/books/StatusBadge.svelte';
 
 	let { data } = $props();
+
+	function statusLabel(item: {
+		status_label: string | null;
+		system_category: string | null;
+	}): string | null {
+		return item.status_label ?? (item.system_category ? null : 'Not in library');
+	}
 </script>
 
 <svelte:head>
@@ -45,13 +53,16 @@
 							<BookOpen size="14" class="text-gray-400" />
 						</div>
 					{/if}
-					<div class="flex-1">
-						<a
-							href={href(`/books/${item.book_id}`)}
-							class="font-medium text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
-						>
-							{item.original_title}
-						</a>
+					<div class="min-w-0 flex-1 space-y-1">
+						<div class="flex flex-wrap items-center gap-2">
+							<a
+								href={href(`/books/${item.book_id}`)}
+								class="font-medium text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
+							>
+								{item.original_title}
+							</a>
+							<StatusBadge category={item.system_category} label={statusLabel(item)} />
+						</div>
 						{#if item.authors}
 							<p class="text-xs text-gray-500 dark:text-gray-400">{item.authors}</p>
 						{/if}

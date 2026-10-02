@@ -5,6 +5,40 @@ All notable changes to ChapterLane will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Added device keys and an authenticated reading-device API for per-user library discovery and retry-safe status/percent updates
+- Added a KOReader plugin with explicit book linking, offline retry-safe progress sync, manual completion, and a usage/implementation guide
+- KOReader can import the HTTPS address and device key from a two-line file transferred over USB
+- KOReader book linking now starts with an editable fuzzy title filter, ranked matches, and a Show all books option
+- Server logs are stored in the database (newest 5,000 kept, unhandled request errors included) and can be browsed by the instance owner under Settings → Server logs, with level, module, and text filters
+- Top Authors on the statistics page can be switched between read books, want-to-read books, and all books, and states which one is counted
+
+- Shelves overview now uses visual cards with recent book cover previews and a fallback book icon
+- Lists overview now uses matching visual cards with recent book cover previews and visibility/book counts
+- List detail pages show each book's current reading status, including a neutral "Not in library" badge
+
+### Changed
+
+- Book detail page redesigned with a cover-focused hero layout and separate cards for reading state, dates, shelves, and description
+- Total pages editing now lives inside the reading-state card instead of a separate awkward section
+- Setting a book to a non-planned status now requires a positive total page count so page-based statistics remain accurate
+- Setting a book to active or completed automatically fills missing started/finished dates
+
+### Fixed
+
+- Completed books with no progress entries now count their full page count in the pages-read statistics for the finished month
+- Pages-read statistics now count progress deltas instead of repeatedly summing absolute current-page values
+- Non-planned books can no longer clear their total page count
+- Docker deployments now include SQL migrations; startup applies pending schema changes instead of silently skipping them
+- KOReader connection failures now show the transport reason or proxy HTTP status instead of a generic network error
+- Deployment now keeps remote .env origin and cookie settings when no explicit overrides are passed
+- Docker build context now excludes private device-key transfer notes
+- KOReader book picker no longer crashes on releases without `util.stringLower`; it falls back to Lua lowercase for matching
+- Server logs no longer record 404 responses (such as scanner probes for `/.git/config`) as errors
+
 ## [1.3.0] - 2026-04-13
 
 ### Added

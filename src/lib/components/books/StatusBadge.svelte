@@ -31,7 +31,7 @@
 	const displayLabel = $derived(label ?? categoryLabels[category ?? '']?.() ?? category);
 </script>
 
-{#if category}
+{#if category || label}
 	<span
 		class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {colorClass}"
 	>

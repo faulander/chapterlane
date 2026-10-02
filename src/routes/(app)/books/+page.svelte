@@ -29,7 +29,12 @@
 	function buildUrl(params: Record<string, string | number | undefined>): string {
 		const parts: string[] = [];
 		for (const [key, value] of Object.entries(params)) {
-			if (value !== undefined && value !== '' && value !== 'all' && !(key === 'sort' && value === 'added_desc')) {
+			if (
+				value !== undefined &&
+				value !== '' &&
+				value !== 'all' &&
+				!(key === 'sort' && value === 'added_desc')
+			) {
 				parts.push(`${key}=${encodeURIComponent(String(value))}`);
 			}
 		}
@@ -38,11 +43,13 @@
 
 	function onSortChange(e: Event) {
 		const value = (e.target as HTMLSelectElement).value;
-		goto(buildUrl({
-			status: data.currentFilter === 'all' ? undefined : data.currentFilter,
-			q: data.search || undefined,
-			sort: value
-		}));
+		goto(
+			buildUrl({
+				status: data.currentFilter === 'all' ? undefined : data.currentFilter,
+				q: data.search || undefined,
+				sort: value
+			})
+		);
 	}
 </script>
 
@@ -131,6 +138,9 @@
 					shelvesJson={book.shelves_json}
 					listsJson={book.lists_json}
 					currentPercent={book.current_percent}
+					statuses={data.statuses}
+					currentStatusId={book.current_status_id}
+					hasTotalPages={!!book.user_total_pages}
 				/>
 			{/each}
 		</div>

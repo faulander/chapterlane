@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { BookOpen } from 'svelte-lucide';
-	import { goto } from '$app/navigation';
 	import { href } from '$lib/utils/navigation';
 	import StatusBadge from './StatusBadge.svelte';
+	import StatusQuickSelect from './StatusQuickSelect.svelte';
 
 	interface TagItem {
 		id: string;
 		name: string;
+	}
+
+	interface StatusOption {
+		id: string;
+		label: string;
+		system_category: string | null;
 	}
 
 	interface Props {
@@ -18,10 +24,24 @@
 		shelvesJson?: string | null;
 		listsJson?: string | null;
 		currentPercent?: number | null;
+		statuses?: StatusOption[];
+		currentStatusId?: string | null;
+		hasTotalPages?: boolean;
 	}
 
-	let { bookId, title, authors, coverUrl, statusCategory, shelvesJson, listsJson, currentPercent }: Props =
-		$props();
+	let {
+		bookId,
+		title,
+		authors,
+		coverUrl,
+		statusCategory,
+		shelvesJson,
+		listsJson,
+		currentPercent,
+		statuses = [],
+		currentStatusId = null,
+		hasTotalPages = false
+	}: Props = $props();
 
 	function parseTagItems(json: string | null | undefined): TagItem[] {
 		if (!json) return [];
@@ -44,15 +64,9 @@
 					.filter((a) => a)
 			: []
 	);
-
-	function onCardClick(e: MouseEvent) {
-		const target = e.target as HTMLElement;
-		if (target.tagName === 'A' || target.closest('a')) return;
-		goto(bookHref);
-	}
+	const canChangeStatus = $derived(statuses.length > 0 && !!currentStatusId);
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-white transition-shadow dark:border-gray-800 dark:bg-gray-900"
 	role="group"
@@ -65,13 +79,19 @@
 				<BookOpen size="32" class="text-gray-400 dark:text-gray-600" />
 			</div>
 		{/if}
-		<div class="space-y-1 px-3 pt-3" class:pb-3={authorList.length === 0 && shelves.length === 0 && lists.length === 0}>
+		<div
+			class="space-y-1 px-3 pt-3"
+			class:pb-3={authorList.length === 0 &&
+				shelves.length === 0 &&
+				lists.length === 0 &&
+				!canChangeStatus}
+		>
 			<h3
 				class="line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400"
 			>
 				{title}
 			</h3>
-			{#if statusCategory}
+			{#if statusCategory && !canChangeStatus}
 				<StatusBadge category={statusCategory} />
 			{/if}
 			{#if currentPercent != null}
@@ -84,16 +104,17 @@
 			{/if}
 		</div>
 	</a>
-	{#if authorList.length > 0 || shelves.length > 0 || lists.length > 0}
-		<div class="space-y-1 px-3 pb-3">
+	{#if authorList.length > 0 || shelves.length > 0 || lists.length > 0 || canChangeStatus}
+		<div class="space-y-2 px-3 pb-3">
 			{#if authorList.length > 0}
 				<p class="line-clamp-1 text-xs">
-					{#each authorList as author, i}
+					{#each authorList as author, i (author)}
 						{#if i > 0}<span class="text-gray-400">, </span>{/if}
 						<a
 							href={href(`/books?q=${encodeURIComponent(author)}`)}
 							class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400"
-						>{author}</a>
+							>{author}</a
+						>
 					{/each}
 				</p>
 			{/if}
@@ -116,6 +137,9 @@
 						</a>
 					{/each}
 				</div>
+			{/if}
+			{#if canChangeStatus}
+				<StatusQuickSelect {bookId} {statuses} {currentStatusId} {hasTotalPages} size="sm" />
 			{/if}
 		</div>
 	{/if}

@@ -1,5 +1,5 @@
 import { searchFTS } from '../db/search';
-import { getBookById } from '../db/books';
+import { getBookById, findBooksByExactTitle } from '../db/books';
 import { getAuthorsForBook } from '../db/authors';
 import { createLogger } from '../utils/logger';
 
@@ -13,10 +13,25 @@ export interface MatchResult {
 export function matchBook(title: string, author: string): MatchResult {
 	if (!title) return { bookId: null, confidence: 0 };
 
+	// Exact-title fast path: FTS tokenization can miss identical title+author
+	// pairs (punctuation-heavy titles, long queries where every token must
+	// match). Check for a literal (case/whitespace-insensitive) title match
+	// directly before falling back to fuzzy search.
+	const exactCandidates = findBooksByExactTitle(title);
+	if (exactCandidates.length > 0) {
+		if (!author) {
+			return { bookId: exactCandidates[0].id, confidence: 1 };
+		}
+		for (const candidate of exactCandidates) {
+			const authorNames = getAuthorsForBook(candidate.id).map((a) => a.name.toLowerCase());
+			if (authorNames.some((an) => fuzzyMatch(author.toLowerCase(), an) > 0.5)) {
+				return { bookId: candidate.id, confidence: 1 };
+			}
+		}
+	}
+
 	const query = `${title} ${author}`.trim();
 	const results = searchFTS(query, 5);
-
-	if (results.length === 0) return { bookId: null, confidence: 0 };
 
 	// Score the best match
 	for (const result of results) {

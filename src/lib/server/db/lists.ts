@@ -27,17 +27,28 @@ export function getListById(id: string): ReadingList | null {
 	);
 }
 
-export function getUserLists(userId: string): (ReadingList & { item_count: number })[] {
+export function getUserLists(
+	userId: string
+): (ReadingList & { item_count: number; cover_urls_json: string | null })[] {
 	return getDb()
 		.prepare(
-			`SELECT rl.*, COUNT(rli.id) as item_count
+			`SELECT rl.*, COUNT(rli.id) as item_count,
+				(SELECT json_group_array(cover_url)
+				 FROM (
+					 SELECT b.cover_url
+					 FROM reading_list_items preview_rli
+					 JOIN books b ON b.id = preview_rli.book_id
+					 WHERE preview_rli.list_id = rl.id AND b.cover_url IS NOT NULL
+					 ORDER BY preview_rli.position ASC, preview_rli.added_at DESC
+					 LIMIT 4
+				 )) as cover_urls_json
 			FROM reading_lists rl
 			LEFT JOIN reading_list_items rli ON rli.list_id = rl.id
 			WHERE rl.user_id = ?
 			GROUP BY rl.id
 			ORDER BY rl.updated_at DESC`
 		)
-		.all(userId) as (ReadingList & { item_count: number })[];
+		.all(userId) as (ReadingList & { item_count: number; cover_urls_json: string | null })[];
 }
 
 export function updateList(
@@ -64,34 +75,54 @@ export function deleteList(id: string): void {
 }
 
 export function getListItems(
-	listId: string
-): (ReadingListItem & { original_title: string; cover_url: string | null; authors: string })[] {
+	listId: string,
+	userId: string
+): (ReadingListItem & {
+	original_title: string;
+	cover_url: string | null;
+	authors: string;
+	status_label: string | null;
+	system_category: string | null;
+})[] {
 	return getDb()
 		.prepare(
 			`SELECT rli.*, b.original_title, b.cover_url,
-			GROUP_CONCAT(a.name, ', ') as authors
+			GROUP_CONCAT(a.name, ', ') as authors,
+			sd.label as status_label,
+			sd.system_category
 			FROM reading_list_items rli
 			JOIN books b ON b.id = rli.book_id
 			LEFT JOIN book_authors ba ON ba.book_id = b.id
 			LEFT JOIN authors a ON a.id = ba.author_id
+			LEFT JOIN user_books ub ON ub.book_id = b.id AND ub.user_id = ?
+			LEFT JOIN status_definitions sd ON sd.id = ub.current_status_id
 			WHERE rli.list_id = ?
 			GROUP BY rli.id
 			ORDER BY rli.position`
 		)
-		.all(listId) as (ReadingListItem & {
+		.all(userId, listId) as (ReadingListItem & {
 		original_title: string;
 		cover_url: string | null;
 		authors: string;
+		status_label: string | null;
+		system_category: string | null;
 	})[];
 }
 
-export function addItemToList(listId: string, bookId: string, note?: string, position?: number): string {
+export function addItemToList(
+	listId: string,
+	bookId: string,
+	note?: string,
+	position?: number
+): string {
 	const id = generateId();
-	const pos = position ?? ((
-		getDb()
-			.prepare('SELECT MAX(position) as max_pos FROM reading_list_items WHERE list_id = ?')
-			.get(listId) as { max_pos: number | null }
-	).max_pos ?? -1) + 1;
+	const pos =
+		position ??
+		((
+			getDb()
+				.prepare('SELECT MAX(position) as max_pos FROM reading_list_items WHERE list_id = ?')
+				.get(listId) as { max_pos: number | null }
+		).max_pos ?? -1) + 1;
 	getDb()
 		.prepare(
 			'INSERT OR IGNORE INTO reading_list_items (id, list_id, book_id, note, position) VALUES (?, ?, ?, ?, ?)'

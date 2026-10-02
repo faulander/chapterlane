@@ -8,7 +8,7 @@ import {
 	updateImportRow
 } from '../db/imports';
 import { addBook } from './book-service';
-import { addBookToLibrary, getUserBook } from '../db/library';
+import { addBookToLibrary, getUserBook, getUserBookById } from '../db/library';
 import { matchBook } from './import-matcher';
 import { parseGoodreadsCSV, mapGoodreadsStatus } from './parsers/goodreads-parser';
 import { parseStorygraphCSV, mapStorygraphStatus } from './parsers/storygraph-parser';
@@ -202,6 +202,20 @@ export function executeImport(jobId: string, userId: string, language: string = 
 	const shelfCache = new Map<string, string>();
 	const listCache = new Map<string, string>();
 
+	// Books created earlier in this same run, keyed by normalized title+authors.
+	// The pre-parse match against the catalog (matchBook) can't see sibling rows
+	// from the same source, so without this, a source library that lists the
+	// same book twice (e.g. two formats/editions as separate entries) creates
+	// two duplicate book records instead of reusing the first.
+	const newBooksInJob = new Map<string, string>();
+	const dedupKey = (title: string, authors: string[]): string =>
+		title.trim().toLowerCase() +
+		'::' +
+		authors
+			.map((a) => a.trim().toLowerCase())
+			.sort()
+			.join(',');
+
 	if (isCalibre) {
 		// Pre-load existing shelves and lists to avoid duplicates
 		for (const shelf of getUserShelves(userId)) {
@@ -244,7 +258,7 @@ export function executeImport(jobId: string, userId: string, language: string = 
 					}
 
 					// For Calibre imports, use the language from the Calibre DB if available
-					const bookLanguage = (isCalibre && rawData.language) ? rawData.language : language;
+					const bookLanguage = isCalibre && rawData.language ? rawData.language : language;
 
 					if (!bookId && row.parsed_title) {
 						const authors = row.parsed_author
@@ -253,12 +267,17 @@ export function executeImport(jobId: string, userId: string, language: string = 
 									.map((a) => a.trim())
 									.filter((a) => a)
 							: [];
+						const bookKey = dedupKey(row.parsed_title, authors);
 
-						bookId = addBook({
-							original_title: row.parsed_title,
-							original_language: bookLanguage,
-							authors
-						});
+						bookId = newBooksInJob.get(bookKey) ?? null;
+						if (!bookId) {
+							bookId = addBook({
+								original_title: row.parsed_title,
+								original_language: bookLanguage,
+								authors
+							});
+							newBooksInJob.set(bookKey, bookId);
+						}
 					}
 
 					if (!bookId) {
@@ -276,10 +295,11 @@ export function executeImport(jobId: string, userId: string, language: string = 
 					}
 
 					let userBook = getUserBook(userId, bookId);
+					const wasAlreadyInLibrary = !!userBook;
 					if (!userBook) {
 						const statusId = STATUS_MAP[row.parsed_status || 'planned'] || 'sys_want_to_read';
 						const userBookId = addBookToLibrary(userId, bookId, statusId);
-						userBook = { id: userBookId } as any;
+						userBook = getUserBookById(userBookId);
 					}
 
 					// Calibre tags → shelves
@@ -306,8 +326,13 @@ export function executeImport(jobId: string, userId: string, language: string = 
 						addItemToList(listId, bookId, undefined, rawData.seriesIndex ?? undefined);
 					}
 
-					updateImportRow(row.id, { import_result: 'imported' });
-					importedCount++;
+					if (wasAlreadyInLibrary) {
+						updateImportRow(row.id, { import_result: 'skipped' });
+						skippedCount++;
+					} else {
+						updateImportRow(row.id, { import_result: 'imported' });
+						importedCount++;
+					}
 				} catch (e) {
 					updateImportRow(row.id, {
 						import_result: 'error',

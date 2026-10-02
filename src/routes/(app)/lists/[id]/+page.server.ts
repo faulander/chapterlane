@@ -11,7 +11,7 @@ import {
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const list = getListById(params.id);
 	if (!list || list.user_id !== locals.user!.id) throw error(404, 'List not found');
-	const items = getListItems(params.id);
+	const items = getListItems(params.id, locals.user!.id);
 	return { list, items };
 };
 

@@ -2,13 +2,15 @@ import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { getUserBooks } from '$lib/server/db/library';
 import { getUserReadingPlaces } from '$lib/server/db/reading-places';
+import { getStatusesForUser } from '$lib/server/db/statuses';
 import { logProgress } from '$lib/server/services/progress-service';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = locals.user!;
 	const books = getUserBooks(user.id, { statusCategory: 'active' });
 	const readingPlaces = getUserReadingPlaces(user.id);
-	return { books, readingPlaces };
+	const statuses = getStatusesForUser(user.id);
+	return { books, readingPlaces, statuses };
 };
 
 export const actions: Actions = {

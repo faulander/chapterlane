@@ -1,5 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { getFeedForUser, getUserEvents } from '$lib/server/db/feed';
+import { getUserBooks } from '$lib/server/db/library';
+import { getStatusesForUser } from '$lib/server/db/statuses';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { user } = await parent();
@@ -9,5 +11,9 @@ export const load: PageServerLoad = async ({ parent }) => {
 		feed = getUserEvents(user.id);
 		ownFeed = true;
 	}
-	return { user, feed, ownFeed };
+
+	const activeBooks = getUserBooks(user.id, { statusCategory: 'active' });
+	const statuses = getStatusesForUser(user.id);
+
+	return { user, feed, ownFeed, activeBooks, statuses };
 };

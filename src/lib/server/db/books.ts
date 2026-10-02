@@ -29,6 +29,12 @@ export function getBookById(id: string): Book | null {
 	return (getDb().prepare('SELECT * FROM books WHERE id = ?').get(id) as Book) ?? null;
 }
 
+export function findBooksByExactTitle(title: string): Book[] {
+	return getDb()
+		.prepare('SELECT * FROM books WHERE lower(trim(original_title)) = lower(trim(?))')
+		.all(title) as Book[];
+}
+
 export function updateBook(
 	id: string,
 	data: {

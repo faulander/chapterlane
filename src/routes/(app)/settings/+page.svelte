@@ -1,16 +1,31 @@
 <script lang="ts">
-	import { User, Shield, Globe, BookMarked, Tag, Upload } from 'svelte-lucide';
+	import {
+		User,
+		Shield,
+		Globe,
+		BookMarked,
+		Tag,
+		Upload,
+		KeyRound,
+		ScrollText
+	} from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 
-	const sections = [
+	let { data } = $props();
+
+	const sections = $derived([
 		{ href: '/settings/profile', icon: User, label: m.settings_profile() },
 		{ href: '/settings/privacy', icon: Shield, label: m.settings_privacy() },
 		{ href: '/settings/language', icon: Globe, label: m.settings_language() },
 		{ href: '/settings/statuses', icon: Tag, label: m.settings_statuses_title() },
 		{ href: '/settings/reading-places', icon: BookMarked, label: m.reading_places_title() },
-		{ href: '/import', icon: Upload, label: m.import_title() }
-	];
+		{ href: '/settings/devices', icon: KeyRound, label: m.device_title() },
+		{ href: '/import', icon: Upload, label: m.import_title() },
+		...(data.canViewLogs
+			? [{ href: '/settings/logs', icon: ScrollText, label: m.logs_title() }]
+			: [])
+	]);
 </script>
 
 <svelte:head>
@@ -19,7 +34,6 @@
 
 <div class="space-y-6">
 	<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.nav_settings()}</h1>
-
 	<div class="grid gap-3 sm:grid-cols-2">
 		{#each sections as section (section.href)}
 			<a

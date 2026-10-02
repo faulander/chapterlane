@@ -4,6 +4,7 @@
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
 	import Button from '$lib/components/ui/Button.svelte';
+	import StatusQuickSelect from '$lib/components/books/StatusQuickSelect.svelte';
 
 	let { data } = $props();
 </script>
@@ -44,16 +45,28 @@
 							{/if}
 						</a>
 						<div class="flex-1 space-y-2">
-							<a
-								href={href(`/books/${book.book_id}`)}
-								class="font-medium text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
-							>
-								{book.display_title}
-							</a>
-							{#if book.authors}
-								<p class="text-sm text-gray-500 dark:text-gray-400">{book.authors}</p>
-							{/if}
-
+							<div class="flex flex-wrap items-start justify-between gap-3">
+								<div class="space-y-1">
+									<a
+										href={href(`/books/${book.book_id}`)}
+										class="font-medium text-gray-900 hover:text-indigo-600 dark:text-white dark:hover:text-indigo-400"
+									>
+										{book.display_title}
+									</a>
+									{#if book.authors}
+										<p class="text-sm text-gray-500 dark:text-gray-400">{book.authors}</p>
+									{/if}
+								</div>
+								<div class="w-40 shrink-0">
+									<StatusQuickSelect
+										bookId={book.book_id}
+										statuses={data.statuses}
+										currentStatusId={book.current_status_id}
+										hasTotalPages={!!book.user_total_pages}
+										size="sm"
+									/>
+								</div>
+							</div>
 							{#if book.current_percent !== null || book.current_page !== null}
 								<div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
 									{#if book.current_page !== null}

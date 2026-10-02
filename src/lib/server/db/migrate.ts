@@ -5,7 +5,7 @@ import { createLogger } from '../utils/logger';
 
 const log = createLogger('migrate');
 
-const MIGRATIONS_DIR = join(import.meta.dirname, 'migrations');
+const MIGRATIONS_DIR = join(process.cwd(), 'src/lib/server/db/migrations');
 
 export function runMigrations(db: Database): void {
 	db.exec(`
@@ -23,15 +23,9 @@ export function runMigrations(db: Database): void {
 			.map((row) => (row as { version: number }).version)
 	);
 
-	let files: string[];
-	try {
-		files = readdirSync(MIGRATIONS_DIR)
-			.filter((f) => f.endsWith('.sql'))
-			.sort();
-	} catch {
-		log.warn('No migrations directory found, skipping migrations');
-		return;
-	}
+	const files = readdirSync(MIGRATIONS_DIR)
+		.filter((f) => f.endsWith('.sql'))
+		.sort();
 
 	for (const file of files) {
 		const match = file.match(/^(\d+)_/);

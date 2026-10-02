@@ -62,6 +62,13 @@
 			}
 		]
 	});
+
+	const authorScopes = [
+		{ value: 'read', label: m.stats_authors_scope_read, note: m.stats_authors_note_read },
+		{ value: 'wanted', label: m.stats_authors_scope_wanted, note: m.stats_authors_note_wanted },
+		{ value: 'all', label: m.stats_authors_scope_all, note: m.stats_authors_note_all }
+	];
+	const authorNote = $derived(authorScopes.find((s) => s.value === data.authorScope)!.note());
 </script>
 
 <svelte:head>
@@ -73,7 +80,7 @@
 		<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.nav_stats()}</h1>
 		<div class="flex gap-2">
 			<a
-				href={href(`/stats?year=${data.year - 1}`)}
+				href={href(`/stats?year=${data.year - 1}&authors=${data.authorScope}`)}
 				class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
 			>
 				{data.year - 1}
@@ -84,7 +91,7 @@
 				{data.year}
 			</span>
 			<a
-				href={href(`/stats?year=${data.year + 1}`)}
+				href={href(`/stats?year=${data.year + 1}&authors=${data.authorScope}`)}
 				class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
 			>
 				{data.year + 1}
@@ -128,13 +135,30 @@
 	{/if}
 
 	<!-- Top authors -->
-	{#if data.topAuthors.length > 0}
-		<div
-			class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
-		>
-			<h2 class="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+	<div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+		<div class="mb-1 flex flex-wrap items-center justify-between gap-2">
+			<h2 class="text-lg font-semibold text-gray-900 dark:text-white">
 				{m.stats_top_authors()}
 			</h2>
+			<nav class="flex gap-1" aria-label={m.stats_top_authors()}>
+				{#each authorScopes as scope (scope.value)}
+					<a
+						href={href(`/stats?year=${data.year}&authors=${scope.value}`)}
+						aria-current={scope.value === data.authorScope ? 'true' : undefined}
+						class="min-h-[36px] rounded-lg border px-3 py-1.5 text-sm {scope.value ===
+						data.authorScope
+							? 'border-indigo-300 bg-indigo-100 font-medium text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
+							: 'border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300'}"
+					>
+						{scope.label()}
+					</a>
+				{/each}
+			</nav>
+		</div>
+		<p class="mb-3 text-sm text-gray-500 dark:text-gray-400">{authorNote}</p>
+		{#if data.topAuthors.length === 0}
+			<p class="text-sm text-gray-500 dark:text-gray-400">{m.stats_authors_none()}</p>
+		{:else}
 			<div class="space-y-2">
 				{#each data.topAuthors as author, i (author.name)}
 					<div class="flex items-center justify-between">
@@ -145,6 +169,6 @@
 					</div>
 				{/each}
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
