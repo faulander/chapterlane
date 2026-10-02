@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Dashboard activity rows are compact (small cover, title and story on two lines, time and progress on the right) in one shared list, about half the height of the previous cards
 - Dashboard activity shows an icon and color accent per row (finished, milestone, started, added, progress) and groups rows under Today / Yesterday / date headings in the viewer's timezone
 - Dashboard activity shows the latest 10 rows with a "Show more" link that reveals 10 more at a time (works without JavaScript)
+- Dashboard shows a personal summary when you have no friends: reading streak, days read in the last 7 days and books finished, a yearly book goal ring (set it right on the dashboard), and a strip of recently finished covers
 - Book detail page redesigned with a cover-focused hero layout and separate cards for reading state, dates, shelves, and description
 - Total pages editing now lives inside the reading-state card instead of a separate awkward section
 - Setting a book to a non-planned status now requires a positive total page count so page-based statistics remain accurate

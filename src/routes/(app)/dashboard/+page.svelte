@@ -6,8 +6,9 @@
 	import { dayKey, dayRelation } from '$lib/utils/feed-groups';
 	import BookCard from '$lib/components/books/BookCard.svelte';
 	import FeedGroupRow from '$lib/components/feed/FeedGroupRow.svelte';
+	import SoloPanel from '$lib/components/dashboard/SoloPanel.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	// Day boundaries are UTC while rendering on the server and switch to the viewer's own
 	// timezone after mount, so the first client render matches the server HTML.
@@ -88,6 +89,10 @@
 			</div>
 		{/if}
 	</section>
+
+	{#if data.solo}
+		<SoloPanel solo={data.solo} goalError={!!form?.goalError} />
+	{/if}
 
 	{#if data.ownFeed}
 		<h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">

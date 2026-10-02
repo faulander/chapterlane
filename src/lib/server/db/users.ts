@@ -69,3 +69,10 @@ export function updateUser(
 			id
 		);
 }
+
+/** Sets (or clears with null) the number of books the user wants to finish each year. */
+export function setYearlyBookGoal(id: string, goal: number | null): void {
+	getDb()
+		.prepare("UPDATE users SET yearly_book_goal = ?, updated_at = datetime('now') WHERE id = ?")
+		.run(goal, id);
+}

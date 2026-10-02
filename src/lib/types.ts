@@ -10,6 +10,7 @@ export interface User {
 	bio: string | null;
 	preferred_language: string;
 	profile_visibility: Visibility;
+	yearly_book_goal: number | null;
 	created_at: string;
 	updated_at: string;
 }
