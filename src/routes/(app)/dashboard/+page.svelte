@@ -115,6 +115,15 @@
 				{/if}
 				<FeedGroupRow {group} />
 			{/each}
+			{#if data.showMore}
+				<a
+					href={href(`/dashboard?feed=${data.showMore.nextLimit}`)}
+					data-sveltekit-noscroll
+					class="block px-3 py-2.5 text-center text-sm font-medium text-indigo-600 hover:bg-gray-50 dark:text-indigo-400 dark:hover:bg-gray-800/50"
+				>
+					{m.feed_show_more({ count: String(data.showMore.count) })}
+				</a>
+			{/if}
 		</div>
 	{/if}
 </div>

@@ -161,6 +161,7 @@
 	"feed_book_completed": "{name} finished this book",
 	"feed_day_today": "Today",
 	"feed_day_yesterday": "Yesterday",
+	"feed_show_more": "Show {count} more",
 	"feed_step_added": "Added",
 	"feed_step_started": "Started",
 	"feed_step_page": "p. {page}",
