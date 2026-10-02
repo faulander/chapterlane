@@ -1,8 +1,22 @@
 <script lang="ts">
-	import { BookOpen, ChevronRight } from 'svelte-lucide';
+	import {
+		BookOpen,
+		BookPlus,
+		ChevronRight,
+		Flame,
+		Sparkles,
+		Tag,
+		TrendingUp,
+		Trophy
+	} from 'svelte-lucide';
 	import { href } from '$lib/utils/navigation';
 	import * as m from '$lib/paraglide/messages';
-	import type { FeedGroup, FeedStep } from '$lib/utils/feed-groups';
+	import {
+		groupAccent,
+		type FeedAccent,
+		type FeedGroup,
+		type FeedStep
+	} from '$lib/utils/feed-groups';
 
 	let { group }: { group: FeedGroup } = $props();
 
@@ -41,11 +55,44 @@
 	}
 
 	const percent = $derived(group.percent === null ? null : Math.round(group.percent));
+
+	const accents: Record<
+		FeedAccent,
+		{ icon: typeof Trophy; border: string; iconClass: string; tint: string }
+	> = {
+		finished: {
+			icon: Trophy,
+			border: 'border-emerald-500',
+			iconClass: 'text-emerald-600 dark:text-emerald-400',
+			tint: 'bg-emerald-50/60 dark:bg-emerald-950/20'
+		},
+		milestone: {
+			icon: Flame,
+			border: 'border-amber-500',
+			iconClass: 'text-amber-500',
+			tint: 'bg-amber-50/60 dark:bg-amber-950/20'
+		},
+		started: {
+			icon: Sparkles,
+			border: 'border-indigo-500',
+			iconClass: 'text-indigo-500',
+			tint: ''
+		},
+		added: { icon: BookPlus, border: 'border-sky-500', iconClass: 'text-sky-500', tint: '' },
+		progress: {
+			icon: TrendingUp,
+			border: 'border-transparent',
+			iconClass: 'text-gray-400',
+			tint: ''
+		},
+		other: { icon: Tag, border: 'border-transparent', iconClass: 'text-gray-400', tint: '' }
+	};
+	const accent = $derived(accents[groupAccent(group)]);
 </script>
 
 <a
 	href={group.bookId ? href(`/books/${group.bookId}`) : '#'}
-	class="flex items-center gap-3 px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50"
+	class="flex items-center gap-3 border-l-[3px] px-3 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50 {accent.border} {accent.tint}"
 >
 	{#if group.coverUrl}
 		<img
@@ -75,11 +122,17 @@
 
 		{#if group.finished}
 			<p class="truncate text-xs font-medium text-emerald-700 dark:text-emerald-400">
-				{m.feed_book_completed({ name: group.actorName })}
+				<accent.icon
+					size="12"
+					class="mr-1 inline {accent.iconClass}"
+					aria-hidden="true"
+				/>{m.feed_book_completed({ name: group.actorName })}
 			</p>
 		{:else}
 			<p class="truncate text-xs text-gray-600 dark:text-gray-300">
-				<span class="font-medium text-gray-900 dark:text-white">{group.actorName}</span>
+				<accent.icon size="12" class="mr-1 inline {accent.iconClass}" aria-hidden="true" /><span
+					class="font-medium text-gray-900 dark:text-white">{group.actorName}</span
+				>
 				{#each group.steps as step, index (index)}
 					{#if index > 0}<ChevronRight
 							size="12"

@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { groupFeedEvents, type FeedEventLike } from './feed-groups';
+import {
+	dayKey,
+	dayRelation,
+	groupAccent,
+	groupFeedEvents,
+	type FeedEventLike
+} from './feed-groups';
 
 let counter = 0;
 function event(
@@ -133,5 +139,56 @@ describe('groupFeedEvents', () => {
 		expect(group.actorName).toBe('Anna B.');
 		expect(group.steps).toEqual([{ kind: 'progress', page: null, percent: null }]);
 		expect(group.percent).toBeNull();
+	});
+});
+
+describe('groupAccent', () => {
+	const accentOf = (...events: FeedEventLike[]) => groupAccent(groupFeedEvents(events)[0]);
+	const milestone = event({
+		created_at: '2026-10-01 12:00:00',
+		event_type: 'progress_milestone',
+		payload_json: JSON.stringify({ percent: 25 })
+	});
+	const started = event({ created_at: '2026-10-01 10:00:00', event_type: 'book_started' });
+
+	it('prefers finished, then milestone, then started, then added, then plain progress', () => {
+		expect(
+			accentOf(event({ created_at: '2026-10-01 12:00:00', event_type: 'book_completed' }))
+		).toBe('finished');
+		expect(accentOf(milestone, started)).toBe('milestone');
+		expect(accentOf(progress('2026-10-01 12:00:00', 30), started)).toBe('started');
+		expect(
+			accentOf(
+				progress('2026-10-01 12:00:00', 30),
+				event({ created_at: '2026-10-01 10:00:00', event_type: 'book_added' })
+			)
+		).toBe('added');
+		expect(accentOf(progress('2026-10-01 12:00:00', 30))).toBe('progress');
+	});
+
+	it('falls back to other for status-only changes', () => {
+		expect(
+			accentOf(
+				event({
+					created_at: '2026-10-01 12:00:00',
+					event_type: 'status_changed',
+					payload_json: JSON.stringify({ status_label: 'On Hold' })
+				})
+			)
+		).toBe('other');
+	});
+});
+
+describe('day headings', () => {
+	it('uses the UTC calendar day when not local', () => {
+		expect(dayKey('2026-10-01 23:59:59', false)).toBe('2026-10-01');
+		expect(dayKey('2026-10-02 00:00:00', false)).toBe('2026-10-02');
+	});
+
+	it('relates a day to today and yesterday, including across a month boundary', () => {
+		const now = new Date('2026-11-01T08:00:00Z');
+		expect(dayRelation('2026-11-01', now, false)).toBe('today');
+		expect(dayRelation('2026-10-31', now, false)).toBe('yesterday');
+		expect(dayRelation('2026-10-30', now, false)).toBe('date');
 	});
 });

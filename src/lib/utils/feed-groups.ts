@@ -171,3 +171,41 @@ function summarize({ events }: OpenGroup): FeedGroup {
 		eventCount: events.length
 	};
 }
+
+export type FeedAccent = 'finished' | 'milestone' | 'started' | 'added' | 'progress' | 'other';
+
+/** Picks the most notable thing that happened in a group; drives its icon and color. */
+export function groupAccent(group: FeedGroup): FeedAccent {
+	if (group.finished) return 'finished';
+	if (group.milestone !== null) return 'milestone';
+	if (group.steps.some((step) => step.kind === 'started')) return 'started';
+	if (group.steps.some((step) => step.kind === 'added')) return 'added';
+	if (group.steps.some((step) => step.kind === 'progress')) return 'progress';
+	return 'other';
+}
+
+function dayKeyOfMs(ms: number, local: boolean): string {
+	const date = new Date(ms);
+	const year = local ? date.getFullYear() : date.getUTCFullYear();
+	const month = (local ? date.getMonth() : date.getUTCMonth()) + 1;
+	const day = local ? date.getDate() : date.getUTCDate();
+	return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+/** Calendar day (YYYY-MM-DD) of a feed timestamp in the viewer's local time or in UTC. */
+export function dayKey(createdAt: string, local: boolean): string {
+	return dayKeyOfMs(toMs(createdAt), local);
+}
+
+/** Whether a day key is today, yesterday, or an older date, relative to `now`. */
+export function dayRelation(
+	key: string,
+	now: Date,
+	local: boolean
+): 'today' | 'yesterday' | 'date' {
+	if (key === dayKeyOfMs(now.getTime(), local)) return 'today';
+	const yesterday = new Date(now);
+	if (local) yesterday.setDate(yesterday.getDate() - 1);
+	else yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+	return key === dayKeyOfMs(yesterday.getTime(), local) ? 'yesterday' : 'date';
+}

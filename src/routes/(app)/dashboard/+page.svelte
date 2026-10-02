@@ -1,10 +1,43 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { href } from '$lib/utils/navigation';
+	import { getLocale } from '$lib/paraglide/runtime';
 	import * as m from '$lib/paraglide/messages';
+	import { dayKey, dayRelation } from '$lib/utils/feed-groups';
 	import BookCard from '$lib/components/books/BookCard.svelte';
 	import FeedGroupRow from '$lib/components/feed/FeedGroupRow.svelte';
 
 	let { data } = $props();
+
+	// Day boundaries are UTC while rendering on the server and switch to the viewer's own
+	// timezone after mount, so the first client render matches the server HTML.
+	let local = $state(false);
+	onMount(() => {
+		local = true;
+	});
+
+	function dayHeading(createdAt: string, key: string, now: Date): string {
+		const relation = dayRelation(key, now, local);
+		if (relation === 'today') return m.feed_day_today();
+		if (relation === 'yesterday') return m.feed_day_yesterday();
+		return new Intl.DateTimeFormat(getLocale(), {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long',
+			timeZone: local ? undefined : 'UTC'
+		}).format(new Date(createdAt.replace(' ', 'T') + 'Z'));
+	}
+
+	const feedRows = $derived.by(() => {
+		const now = new Date();
+		let previousKey = '';
+		return data.feed.map((group) => {
+			const key = dayKey(group.latestAt, local);
+			const heading = key === previousKey ? null : dayHeading(group.latestAt, key, now);
+			previousKey = key;
+			return { group, heading };
+		});
+	});
 </script>
 
 <svelte:head>
@@ -72,7 +105,14 @@
 		<div
 			class="divide-y divide-gray-100 overflow-hidden rounded-lg border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900"
 		>
-			{#each data.feed as group (group.id)}
+			{#each feedRows as { group, heading } (group.id)}
+				{#if heading}
+					<div
+						class="bg-gray-50 px-3 py-1 text-xs font-semibold tracking-wide text-gray-500 uppercase dark:bg-gray-800/60 dark:text-gray-400"
+					>
+						{heading}
+					</div>
+				{/if}
 				<FeedGroupRow {group} />
 			{/each}
 		</div>
