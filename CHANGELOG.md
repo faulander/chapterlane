@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Dashboard shows a personal summary when you have no friends: reading streak, days read in the last 7 days and books finished, a yearly book goal ring (set it right on the dashboard), and a strip of recently finished covers
 - Book detail page redesigned with a cover-focused hero layout and separate cards for reading state, dates, shelves, and description
 - Total pages editing now lives inside the reading-state card instead of a separate awkward section
+- README rewritten for people running ChapterLane: Docker quick start, settings, HTTPS and reverse proxy notes, importing, KOReader sync, updates and backups
+- `.env.example` no longer contains an API key and documents the Docker settings
 - Setting a book to a non-planned status now requires a positive total page count so page-based statistics remain accurate
 - Setting a book to active or completed automatically fills missing started/finished dates
 

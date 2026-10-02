@@ -1,22 +1,120 @@
 # ChapterLane
 
-A social reading tracker and personal library app. Track what you read, organize books with shelves and lists, log reading progress, connect with friends, and explore your reading statistics.
+A self-hosted reading tracker and personal library. Keep track of what you read, organize books on shelves and in lists, log your progress, follow friends, and see your reading habits in charts. It syncs with KOReader e-readers.
 
-Inspired by Goodreads, StoryGraph, and Calibre — built for readers who want a cleaner, more flexible, multilingual experience.
+Inspired by Goodreads, StoryGraph, and Calibre, for readers who want a cleaner, more flexible, multilingual app they run themselves. Your data lives in one SQLite file on your own server.
 
-## Features
+## What you can do
 
-- **Library management** — add books manually or via Google Books search, organize with custom shelves and reading lists
-- **Reading progress** — track pages/percent, log reading sessions with notes and reading places
-- **Custom statuses** — define your own reading statuses beyond the defaults (planned, active, paused, completed, dropped)
-- **Activity feed** — see your own activity and your friends' updates (progress milestones, status changes, completions)
-- **Social** — add friends, share activity, view profiles with privacy controls
-- **Import** — bring your library from Goodreads (CSV), StoryGraph (CSV), or Calibre (direct DB import with covers, tags, and series)
-- **Statistics** — charts for books/pages by month, by language, by status, by reading place, and top authors (read books by default; switchable to want-to-read or all books)
-- **Multilingual** — full English and German support via Paraglide i18n
-- **Dark mode** — system-aware with manual toggle
+- **Build a library**: add books manually or through Google Books search, with covers fetched automatically.
+- **Organize**: shelves for tags, reading lists for series and plans, and your own reading statuses on top of the defaults (want to read, reading, on hold, completed, dropped).
+- **Track progress**: log pages or percent, with notes and where you read.
+- **Sync your e-reader**: a KOReader plugin sends your reading progress automatically.
+- **See your dashboard**: books you are reading, a compact activity feed grouped by day, and (if you have no friends yet) your reading streak, a yearly book goal, and your recently finished covers.
+- **Read with friends**: add friends, share activity, and control who sees your profile (private, friends, or public).
+- **Look at statistics**: books and pages per month, languages, statuses, reading places, and top authors (read books by default, or want-to-read, or everything).
+- **Import**: bring your library from Goodreads (CSV), StoryGraph (CSV), or a Calibre library (covers, tags, and series included).
+- **Use it in English or German**, in light or dark mode.
+
+## Quick start with Docker
+
+You need [Docker](https://docs.docker.com/get-docker/) with Compose.
+
+```sh
+git clone <repo-url> chapterlane
+cd chapterlane
+
+cat > .env <<'EOF'
+APP_ORIGIN=http://localhost:3002
+COOKIE_SECURE=false
+EOF
+
+docker compose up -d --build
+```
+
+Open <http://localhost:3002> and create an account. **The first account you create becomes the owner** of the instance (it is the only one that can see the server logs).
+
+> **`APP_ORIGIN` must be exactly the address you type in your browser**, for example `http://192.168.1.20:3002` or `https://books.example.com`. If it differs, signing in fails with a 403 error. Without the setting, the compose file falls back to a placeholder address that is almost certainly wrong for you.
+
+### Settings
+
+Put these in the `.env` file next to `docker-compose.yml`.
+
+| Variable               | What it does                                                                                            | Default                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `APP_ORIGIN`           | The address you use to reach the app. Required for sign-in to work.                                     | a placeholder, set it         |
+| `CHAPTERLANE_PORT`     | Port on your machine.                                                                                   | `3002`                        |
+| `COOKIE_SECURE`        | Set to `true` when you use `https://`; keep `false` for plain `http://` (otherwise you cannot sign in). | `false`                       |
+| `LOG_LEVEL`            | `debug`, `info`, `warn`, or `error`.                                                                    | `info`                        |
+| `GOOGLE_BOOKS_API_KEY` | Optional. Search and cover lookups work without it but may be rate limited.                             | empty                         |
+| `CALIBRE_LIBRARY_PATH` | Folder of your Calibre library, only for Calibre import (see below).                                    | a placeholder, set it if used |
+
+Your data is stored in the `data/` folder next to the compose file (the database and downloaded covers).
+
+## Using ChapterLane over the internet
+
+1. Put it behind a reverse proxy that provides HTTPS (for example Nginx Proxy Manager, Caddy, or Traefik) and forwards to the port above.
+2. Set `APP_ORIGIN=https://your.domain` and `COOKIE_SECURE=true`, then restart with `docker compose up -d`.
+3. The proxy must pass the original host and protocol on as the standard `X-Forwarded-Host` and `X-Forwarded-Proto` headers; most proxies do this by default.
+
+> **Anyone who can reach the site can register an account.** There is no setting to turn registration off. If the instance is just for you or your family, keep it on your home network or behind a VPN, or restrict access in your reverse proxy.
+
+## First steps
+
+1. **Add books** from **My Books**: search Google Books, or add one by hand.
+2. **Set a status** on each book. Marking a book as reading, paused, completed, or dropped needs a total page count, because the statistics use it.
+3. **Organize** with shelves and reading lists, and adjust your statuses and reading places under **Settings**.
+4. **Log progress** on a book's page, or let your e-reader do it (see below).
+5. Check the **Dashboard** and **Stats** pages as you go.
+
+### Importing your existing library
+
+Go to **Settings → Import Books**.
+
+- **Goodreads or StoryGraph**: export your library as CSV from their website and upload it.
+- **Calibre**: Calibre's library has to be visible to the container. Set `CALIBRE_LIBRARY_PATH` to your library folder in `.env` and restart. The folder is mounted read-only at the same path inside the container; enter that path on the Calibre import page. Tags become shelves, series become reading lists, and covers are copied.
+
+## Syncing a KOReader e-reader
+
+The `koreader/chapterlane.koplugin/` folder is a KOReader plugin that sends your reading progress to ChapterLane and picks your book with a title search. It needs your site to be reachable over **HTTPS** from the device.
+
+1. In ChapterLane, open **Settings → Reading devices** and create a key. Copy it right away; it is shown only once.
+2. Install the plugin on the device and enter your address and key.
+3. Open a book and choose **Link this book**.
+
+Books you start from KOReader do not ask for a page count. Add one on the book's page in ChapterLane so the page statistics include it; the plugin only sends a percentage.
+
+The [KOReader guide](koreader/README.md) has the step-by-step setup, copying the key to the device over USB, and troubleshooting.
+
+## Updating and backups
+
+**Update**
+
+```sh
+git pull
+docker compose up -d --build
+```
+
+Database changes are applied automatically when the app starts.
+
+**Back up** the whole `data/` folder. For a consistent copy, stop the app first:
+
+```sh
+docker compose stop
+cp -r data /path/to/backup/
+docker compose start
+```
+
+## Privacy and security notes
+
+- Passwords are stored hashed with argon2id. Device keys are stored only as a one-way digest, so a lost key cannot be shown again; create a new one and revoke the old one.
+- Book searches and cover lookups are sent to Google Books.
+- The owner can browse recent server logs under **Settings → Server logs**. They can contain personal data, such as the email address used in a failed sign-in.
+- Reading streaks count days in UTC.
 
 ## Reading device API
+
+This reference is for building other clients. The KOReader plugin uses it.
 
 Create a revocable device key at **Settings → Reading devices**. Copy it immediately; only its SHA-256 digest is stored. Use HTTPS for any device connection. A key grants access only to its owner's library and reading updates. Revoke it from the same settings page.
 
@@ -27,145 +125,41 @@ Use `Authorization: Bearer <key>` on both endpoints:
 
 Only books already in the owner's library can be updated. A planned book may be activated by an event containing status "active" and percent, without a page count; completion requires an active book. Paused, dropped and completed books reject new updates with HTTP 409 rather than being silently reopened. Unknown books return 404; missing/invalid keys return 401; malformed events return 400. Retries with an already-applied event ID do not create extra progress or status history. Percent is independent of device pagination; the API does not infer physical page counts.
 
-Install the bundled KOReader plugin from koreader/chapterlane.koplugin/. See the [KOReader usage and implementation guide](koreader/README.md) for installation, book linking, sync behavior, and troubleshooting.
+## Development
 
-## Server logs
-
-Log entries at or above `LOG_LEVEL` are also stored in the database (newest 5,000 kept, including unhandled request errors). The instance owner — the first registered account — can browse them at **Settings → Server logs**, filtered by minimum level, module, and text. Other accounts get a 403. Entries can contain personal data such as email addresses from failed logins. Raise `LOG_LEVEL` to `info` or higher in production to avoid storing debug noise.
-
-## Tech Stack
-
-- [SvelteKit](https://svelte.dev) (Svelte 5, runes mode)
-- [Bun](https://bun.sh) runtime
-- SQLite via `bun:sqlite`
-- [Tailwind CSS](https://tailwindcss.com)
-- [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for i18n
-- [Chart.js](https://www.chartjs.org) for statistics
-- [svelte-lucide](https://github.com/shinokada/svelte-lucide) for icons
-
-## Getting Started
-
-### Prerequisites
-
-- [Bun](https://bun.sh) >= 1.0
-
-### Install
+Built with [SvelteKit](https://svelte.dev) (Svelte 5), the [Bun](https://bun.sh) runtime, SQLite (`bun:sqlite`), [Tailwind CSS](https://tailwindcss.com), [Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for translations, and [Chart.js](https://www.chartjs.org).
 
 ```sh
-git clone <repo-url> chapterlane
-cd chapterlane
 bun install
-```
-
-### Configure
-
-Copy the example env file and set your values:
-
-```sh
 cp .env.example .env
+bun run dev          # http://localhost:5173, database created on first run
 ```
 
-| Variable               | Description                       | Default               |
-| ---------------------- | --------------------------------- | --------------------- |
-| `DATABASE_PATH`        | SQLite database location          | `data/chapterlane.db` |
-| `LOG_LEVEL`            | Logging level                     | `debug`               |
-| `GOOGLE_BOOKS_API_KEY` | Google Books API key (for search) | —                     |
-
-### Run
+Useful commands:
 
 ```sh
-bun run dev
+bun run check                   # type-check
+bun run lint                    # prettier + eslint
+bunx vitest run --project server  # unit tests
+bun run build && bun run preview  # production build
 ```
-
-The app will be available at `http://localhost:5173`. The database and tables are created automatically on first run.
-
-### Build for Production
-
-```sh
-bun run build
-bun run preview
-```
-
-Uses the SvelteKit Node adapter.
-
-### Docker
-
-```sh
-docker compose up --build
-```
-
-The container listens on port `3000` and stores persistent data in `./data` mounted at `/app/data`.
-
-For Calibre import, the library folder is bind-mounted read-only into the
-container at the same path so it matches what you enter in the "Calibre
-Library Path" field. Override the host source with `CALIBRE_LIBRARY_PATH`
-(default `/mnt/HD2/BACKUP/CALIBRE_BOOKS`):
-
-```sh
-CALIBRE_LIBRARY_PATH=/path/to/your/calibre/library docker compose up --build
-```
-
-### Deploy
-
-Deploy to the configured server:
-
-```sh
-bun run deploy
-```
-
-Defaults:
-
-- Host: `192.168.42.167` (SSH key auth)
-- Directory: `/mnt/HD4/Docker/own/chapterlane`
-- App port, origin, cookie mode, log level, and Google Books key come from
-  the remote .env or docker-compose.yml unless explicitly overridden.
-
-> `ORIGIN` must exactly match how the app is reached in the browser
-> (SvelteKit rejects form submissions whose `Origin` header doesn't match).
-> If you change `CHAPTERLANE_PORT`, pass a matching `APP_ORIGIN` too, e.g.
-> `CHAPTERLANE_PORT=8080 APP_ORIGIN=http://192.168.42.167:8080 bun run deploy`.
-
-Optional overrides:
-
-```sh
-DEPLOY_HOST=other.host DEPLOY_USER=myuser bun run deploy
-# override what's passed through to the remote docker-compose.yml
-CHAPTERLANE_PORT=8080 APP_ORIGIN=https://books.example.com bun run deploy
-COOKIE_SECURE=true bun run deploy
-```
-
-Password auth is supported if `sshpass` is installed (SSH keys are used by default):
-
-```sh
-DEPLOY_USER=myuser bun run deploy -- --password 'your-password'
-# or
-DEPLOY_USER=myuser DEPLOY_PASSWORD='your-password' bun run deploy
-```
-
-Each deploy rsyncs the app (excluding `data/`) to the remote directory, then
-runs `docker compose up -d --build` to rebuild the image and restart the
-container. The remote `data/chapterlane.db*` and `data/covers/` are seeded
-only if missing; existing runtime data is never overwritten.
-
-## Project Structure
 
 ```
 src/
   lib/
-    components/    # Reusable UI components (BookCard, Button, StatusBadge, etc.)
-    paraglide/     # Generated i18n messages
-    server/
-      db/          # SQLite queries and migrations
-      services/    # Business logic (progress, feed, import, covers)
-      utils/       # Logger, crypto helpers
-    types.ts       # Shared TypeScript interfaces
-    utils/         # Client-side utilities
+    components/    # UI components
+    server/        # database (db/), business logic (services/), helpers (utils/)
+    utils/         # shared helpers
   routes/
-    (app)/         # Authenticated app routes (dashboard, books, reading, etc.)
-    (auth)/        # Login and registration
-messages/          # i18n message files (en.json, de.json)
-data/              # SQLite database (created at runtime)
+    (app)/         # signed-in pages
+    (auth)/        # sign in and registration
+    api/device/    # reading device API
+messages/          # translations (en.json, de.json)
+koreader/          # KOReader plugin and its guide
+data/              # database and covers (created at runtime)
 ```
+
+Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
