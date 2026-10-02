@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Dashboard activity groups one person's updates to a book (added, started, progress) into a single row with a progress bar; finished books stay separate rows, and updates more than a day apart are not merged
+- Dashboard activity rows are compact (small cover, title and story on two lines, time and progress on the right) in one shared list, about half the height of the previous cards
 - Book detail page redesigned with a cover-focused hero layout and separate cards for reading state, dates, shelves, and description
 - Total pages editing now lives inside the reading-state card instead of a separate awkward section
 - Setting a book to a non-planned status now requires a positive total page count so page-based statistics remain accurate

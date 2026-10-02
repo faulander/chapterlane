@@ -69,7 +69,9 @@
 			<p class="text-gray-600 dark:text-gray-400">{m.feed_empty()}</p>
 		</div>
 	{:else}
-		<div class="space-y-3">
+		<div
+			class="divide-y divide-gray-100 overflow-hidden rounded-lg border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900"
+		>
 			{#each data.feed as group (group.id)}
 				<FeedGroupRow {group} />
 			{/each}
