@@ -207,7 +207,10 @@ end
 
 function ChapterLane:chooseBook()
     if not self:configured() then message(_("Set up the ChapterLane connection first.")); return end
-    if not NetworkMgr:isOnline() then message(_("Connect to Wi-Fi to fetch your library.")); return end
+    NetworkMgr:runWhenConnected(function() self:showBookPicker() end)
+end
+
+function ChapterLane:showBookPicker()
     local result, err = self:request("GET", "/api/device/books")
     if not result then message(err); return end
     if type(result.books) ~= "table" then message(_("Invalid library response")); return end
@@ -321,7 +324,10 @@ function ChapterLane:highestQueuedPercent(book_id)
 end
 
 function ChapterLane:drain(interactive)
-    if not self:configured() or not NetworkMgr:isOnline() then return false end
+    if not self:configured() then return false end
+    -- Background syncs stay quiet while offline. Interactive ones try anyway, because right
+    -- after Wi-Fi comes up name resolution can lag; a real failure is reported to the user.
+    if not interactive and not NetworkMgr:isOnline() then return false end
     while #self.queue > 0 do
         local event = self.queue[1]
         local result, err = self:request("POST", "/api/device/sync", event)
@@ -340,22 +346,19 @@ function ChapterLane:drain(interactive)
     return true
 end
 
-function ChapterLane:syncCurrent(interactive)
+function ChapterLane:syncCurrent(interactive, quiet)
     if not self.book_id or not self:configured() or self.completed[self.book_id] then
         if interactive then message(_("Configure ChapterLane and link this book first.")) end
         return
     end
-    if not self:drain(interactive) then
-        if interactive and not NetworkMgr:isOnline() then message(_("Connect to Wi-Fi to sync.")) end
-        return
-    end
+    if not self:drain(interactive) then return end
     local percent = self:percent()
     if not percent then return end
     if percent > (self.last_sent[self.book_id] or -1) then
         self:enqueue({ book_id = self.book_id, status = "active", percent = percent })
         if not self:drain(interactive) then return end
     end
-    if interactive then message(_("ChapterLane progress is up to date.")) end
+    if interactive and not quiet then message(_("ChapterLane progress is up to date.")) end
 end
 
 function ChapterLane:complete()
@@ -365,12 +368,13 @@ function ChapterLane:complete()
     UIManager:show(ConfirmBox:new{
         text = _("Mark this book completed on ChapterLane?"),
         ok_callback = function()
-            if not NetworkMgr:isOnline() then message(_("Connect to Wi-Fi to complete this book.")); return end
-            self:syncCurrent(false)
-            if self.completed[self.book_id] then message(_("Already marked completed on ChapterLane.")); return end
-            if #self.queue > 0 then self:drain(true); return end
-            self:enqueue({ book_id = self.book_id, status = "completed" })
-            if self:drain(true) then message(_("Marked completed on ChapterLane.")) end
+            NetworkMgr:runWhenConnected(function()
+                self:syncCurrent(true, true)
+                if self.completed[self.book_id] then message(_("Already marked completed on ChapterLane.")); return end
+                if #self.queue > 0 then return end -- syncCurrent already reported why
+                self:enqueue({ book_id = self.book_id, status = "completed" })
+                if self:drain(true) then message(_("Marked completed on ChapterLane.")) end
+            end)
         end,
     })
 end
@@ -395,7 +399,7 @@ function ChapterLane:addToMainMenu(menu_items)
             { text = _("Connection settings"), callback = function() self:configure() end },
             { text = _("Import connection file"), callback = function() self:importConnection() end },
             { text = _("Link this book"), callback = function() self:chooseBook() end },
-            { text = _("Sync now"), callback = function() self:syncCurrent(true) end },
+            { text = _("Sync now"), callback = function() NetworkMgr:runWhenConnected(function() self:syncCurrent(true) end) end },
             { text = _("Mark completed"), callback = function() self:complete() end },
             { text = _("Discard pending updates"), callback = function() self:discardPending() end },
         },

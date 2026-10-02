@@ -1,5 +1,11 @@
 # ChapterLane for KOReader
 
+## Requirements
+
+KOReader **2024.01 or newer**. The Wi-Fi handling below needs 2020.08 or newer; the book picker's search status line needs 2024.01. This comes from KOReader's source history, not from testing on every release.
+
+The device must reach your ChapterLane server over **HTTPS**.
+
 ## Usage
 
 1. Copy `chapterlane.koplugin/` into KOReader's `plugins/` directory (for example, `koreader/plugins/chapterlane.koplugin/`), then restart KOReader. Enable **ChapterLane** under **Tools → More tools → Plugin management** if it is disabled. The plugin appears in the document menu under **More tools → ChapterLane** while a book is open.
@@ -21,9 +27,15 @@ Use your actual HTTPS origin on line 1 (no /api path) and the 43-character key c
 
 The transfer file and your computer's copy contain a working secret in plain text. Delete the computer copy after import; if deletion on the device fails, the plugin will tell you to remove it manually. An invalid file is left intact for correction. Do not share the file or put it in a synced/public folder. The persistent chapterlane.lua file also contains the key; if the device or backups are compromised, revoke the key in ChapterLane and create a replacement. An HTTP-only ChapterLane URL cannot be used; set up HTTPS first.
 
+### Wi-Fi
+
+**Link this book**, **Sync now**, and **Mark completed** switch Wi-Fi on for you when it is off and continue by themselves once you are connected. How they do it follows KOReader's own setting under **Network → Action when Wi-Fi is off**: choose **Turn on** to connect without being asked, or **Prompt** (KOReader's default) to confirm first.
+
+Automatic syncing while you read (after 30 seconds without a page turn, and when closing a book) never switches Wi-Fi on by itself, to save battery. If Wi-Fi is off then, the progress is kept and sent the next time Wi-Fi connects, or when you use **Sync now**. If your device turns Wi-Fi off on its own after a while, this is why progress may arrive later rather than immediately.
+
 ### Offline and errors
 
-Unsent events are kept in `chapterlane.lua` in KOReader's settings directory and retried with the same event ID when connectivity returns or **Sync now** is used. A failed event stays queued; the plugin does not silently skip it. If **Sync now** reports `401`, verify the key or create a new one. A `404` means the book is no longer in this account's library. A `409` means its status changed to paused, dropped, or completed, or a completion was requested before it was active. Resolve the status in ChapterLane and retry. If an event is permanently invalid, **Discard pending updates** clears the entire unsent queue after confirmation; this loses those updates. HTTP redirects are not followed, so configure the final HTTPS origin rather than an HTTP URL or redirecting domain.
+Unsent events are kept in `chapterlane.lua` in KOReader's settings directory and retried with the same event ID when Wi-Fi connects or **Sync now** is used. A failed event stays queued; the plugin does not silently skip it. If **Sync now** reports `401`, verify the key or create a new one. A `404` means the book is no longer in this account's library. A `409` means its status changed to paused, dropped, or completed, or a completion was requested before it was active. Resolve the status in ChapterLane and retry. If an event is permanently invalid, **Discard pending updates** clears the entire unsent queue after confirmation; this loses those updates. HTTP redirects are not followed, so configure the final HTTPS origin rather than an HTTP URL or redirecting domain.
 
 For a connection failure, check that the configured hostname exactly matches the HTTPS origin used in the browser. The app must answer GET /api/device/books on that hostname; a TLS handshake failure or DNS error means the request never reached ChapterLane. An HTTP status is shown even when a proxy returns non-JSON HTML. After correcting the USB file, import it again (or change Connection settings), then retry Link this book.
 

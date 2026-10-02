@@ -76,11 +76,11 @@ Go to **Settings → Import Books**.
 
 ## Syncing a KOReader e-reader
 
-The `koreader/chapterlane.koplugin/` folder is a KOReader plugin that sends your reading progress to ChapterLane and picks your book with a title search. It needs your site to be reachable over **HTTPS** from the device.
+The `koreader/chapterlane.koplugin/` folder is a KOReader plugin that sends your reading progress to ChapterLane and picks your book with a title search. It needs **KOReader 2024.01 or newer** and your site to be reachable over **HTTPS** from the device.
 
 1. In ChapterLane, open **Settings → Reading devices** and create a key. Copy it right away; it is shown only once.
 2. Install the plugin on the device and enter your address and key.
-3. Open a book and choose **Link this book**.
+3. Open a book and choose **Link this book**. If Wi-Fi is off, the plugin switches it on for you (set KOReader's **Network → Action when Wi-Fi is off** to **Turn on** to skip the confirmation).
 
 Books you start from KOReader do not ask for a page count. Add one on the book's page in ChapterLane so the page statistics include it; the plugin only sends a percentage.
 

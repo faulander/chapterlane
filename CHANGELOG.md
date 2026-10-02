@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Docker build context now excludes private device-key transfer notes
 - KOReader book picker no longer crashes on releases without `util.stringLower`; it falls back to Lua lowercase for matching
 - Server logs no longer record 404 responses (such as scanner probes for `/.git/config`) as errors
+- KOReader plugin: Link this book, Sync now and Mark completed now switch Wi-Fi on (following KOReader's "Action when Wi-Fi is off" setting) and continue automatically instead of asking you to connect first; automatic background syncs still never wake Wi-Fi. Documented KOReader 2024.01 as the supported minimum
 
 ## [1.3.0] - 2026-04-13
 
