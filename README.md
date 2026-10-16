@@ -4,6 +4,9 @@ A self-hosted reading tracker and personal library. Keep track of what you read,
 
 Inspired by Goodreads, StoryGraph, and Calibre, for readers who want a cleaner, more flexible, multilingual app they run themselves. Your data lives in one SQLite file on your own server.
 
+<img width="1880" height="1344" alt="image" src="https://github.com/user-attachments/assets/e586be3e-2030-4871-84e1-1b05ddcecaee" />
+
+
 ## What you can do
 
 - **Build a library**: add books manually or through Google Books search, with covers fetched automatically.
