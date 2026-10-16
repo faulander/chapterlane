@@ -1,48 +1,45 @@
 <script lang="ts">
 	import { Sun, Moon } from 'svelte-lucide';
+	import { enhance } from '$app/forms';
+	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages';
+	import { href } from '$lib/utils/navigation';
+	import { applyAppearance, isColorMode, isDark } from '$lib/themes';
 
-	let dark = $state(false);
-
-	function init() {
-		if (typeof window === 'undefined') return;
-		const stored = localStorage.getItem('theme');
-		if (
-			stored === 'dark' ||
-			(!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)
-		) {
-			dark = true;
-			document.documentElement.classList.add('dark');
-		} else {
-			dark = false;
-			document.documentElement.classList.remove('dark');
-		}
-	}
-
-	function toggle() {
-		dark = !dark;
-		if (dark) {
-			document.documentElement.classList.add('dark');
-			localStorage.setItem('theme', 'dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-			localStorage.setItem('theme', 'light');
-		}
-	}
+	let prefersDark = $state(false);
 
 	$effect(() => {
-		init();
+		const query = window.matchMedia('(prefers-color-scheme: dark)');
+		prefersDark = query.matches;
+		const onChange = () => (prefersDark = query.matches);
+		query.addEventListener('change', onChange);
+		return () => query.removeEventListener('change', onChange);
 	});
+
+	const dark = $derived(isDark(page.data.appearance.mode, prefersDark));
 </script>
 
-<button
-	onclick={toggle}
-	class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-	aria-label={m.theme_toggle()}
+<!-- Switches between light and dark within the chosen theme; the theme itself is picked in Settings. -->
+<form
+	method="POST"
+	action={href('/settings/appearance')}
+	use:enhance={({ formData }) => {
+		const mode = formData.get('mode');
+		if (isColorMode(mode)) {
+			applyAppearance(document.documentElement, { theme: page.data.appearance.theme, mode });
+		}
+	}}
 >
-	{#if dark}
-		<Sun size="20" />
-	{:else}
-		<Moon size="20" />
-	{/if}
-</button>
+	<input type="hidden" name="mode" value={dark ? 'light' : 'dark'} />
+	<button
+		type="submit"
+		class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+		aria-label={m.theme_toggle()}
+	>
+		{#if dark}
+			<Sun size="20" />
+		{:else}
+			<Moon size="20" />
+		{/if}
+	</button>
+</form>

@@ -1,12 +1,27 @@
 <!doctype html>
 
-<html lang="%paraglide.lang%" dir="%paraglide.dir%">
+<html
+	lang="%paraglide.lang%"
+	dir="%paraglide.dir%"
+	data-theme="%appearance.theme%"
+	data-mode="%appearance.mode%"
+	class="%appearance.class%"
+>
 	<head>
 		<meta charset="utf-8" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 		<meta name="text-scale" content="scale" />
+		<script>
+			// Resolve "system" colour mode before first paint to avoid a light flash.
+			(function () {
+				var root = document.documentElement;
+				if (root.dataset.mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches) {
+					root.classList.add('dark');
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 

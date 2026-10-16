@@ -132,10 +132,10 @@
 								min="1"
 								max="1000"
 								value={solo.goal ?? ''}
-								class="min-h-9 w-24 rounded-lg border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-gray-900"
+								class="min-h-[44px] w-24 rounded-lg border border-gray-300 bg-white px-2 dark:border-gray-700 dark:bg-gray-900"
 							/>
 							<button
-								class="min-h-9 rounded-lg bg-indigo-700 px-3 font-medium text-white hover:bg-indigo-600"
+								class="min-h-[44px] rounded-lg bg-indigo-600 px-4 font-medium text-[var(--color-on-accent,#fff)] hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
 								>{m.common_save()}</button
 							>
 						</span>

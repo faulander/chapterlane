@@ -20,7 +20,7 @@ Inspired by Goodreads, StoryGraph, and Calibre, for readers who want a cleaner, 
 - **Read with friends**: add friends, share activity, and control who sees your profile (private, friends, or public).
 - **Look at statistics**: books and pages per month, languages, statuses, reading places, and top authors (read books by default, or want-to-read, or everything).
 - **Import**: bring your library from Goodreads (CSV), StoryGraph (CSV), or a Calibre library (covers, tags, and series included).
-- **Use it in English or German**, in light or dark mode.
+- **Use it in English or German**, in light or dark mode (or follow your device), with a choice of themes (ChapterLane, Nord, Catppuccin, Gruvbox, Solarized, Dracula, Tokyo Night, Rosé Pine) under **Settings → Appearance**.
 
 ## Quick start with Docker
 

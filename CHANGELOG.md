@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Added Settings → Appearance: eight color themes (ChapterLane, Nord, Catppuccin, Gruvbox, Solarized, Dracula, Tokyo Night, Rosé Pine), each with a light and a dark variant, and a System/Light/Dark mode. The choice is saved to your account (and remembered on the sign-in page); the navbar toggle now persists too and works without JavaScript
 - Added device keys and an authenticated reading-device API for per-user library discovery and retry-safe status/percent updates
 - Added a KOReader plugin with explicit book linking, offline retry-safe progress sync, manual completion, and a usage/implementation guide
 - KOReader can import the HTTPS address and device key from a two-line file transferred over USB
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Themes now keep secondary text and primary buttons/links at WCAG AA contrast (4.5:1) in every theme and mode; Nord (light), Tokyo Night (light) and Solarized (dark) accents and the Catppuccin and Rosé Pine light text colors were adjusted slightly to get there, and the dashboard goal Save button follows the theme's button colors
 - Dashboard activity groups one person's updates to a book (added, started, progress) into a single row with a progress bar; finished books stay separate rows, and updates more than a day apart are not merged
 - Dashboard activity rows are compact (small cover, title and story on two lines, time and progress on the right) in one shared list, about half the height of the previous cards
 - Dashboard activity shows an icon and color accent per row (finished, milestone, started, added, progress) and groups rows under Today / Yesterday / date headings in the viewer's timezone

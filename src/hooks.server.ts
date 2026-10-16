@@ -1,6 +1,7 @@
 import type { Handle, HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { getTextDirection } from '$lib/paraglide/runtime';
+import { APPEARANCE_COOKIE, parseAppearance, parseAppearanceCookie } from '$lib/themes';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 import { validateSession } from '$lib/server/services/auth-service';
 import { triggerCoverFetch } from '$lib/server/services/cover-fetcher';
@@ -30,6 +31,11 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		event.locals.session = null;
 	}
 
+	// The account setting wins; logged-out pages (login, register) use the device cookie.
+	event.locals.appearance = event.locals.user
+		? parseAppearance(event.locals.user.theme, event.locals.user.color_mode)
+		: parseAppearanceCookie(event.cookies.get(APPEARANCE_COOKIE));
+
 	return resolve(event);
 };
 
@@ -42,6 +48,9 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 				html
 					.replace('%paraglide.lang%', locale)
 					.replace('%paraglide.dir%', getTextDirection(locale))
+					.replace('%appearance.theme%', event.locals.appearance.theme)
+					.replace('%appearance.mode%', event.locals.appearance.mode)
+					.replace('%appearance.class%', event.locals.appearance.mode === 'dark' ? 'dark' : '')
 		});
 	});
 

@@ -76,3 +76,11 @@ export function setYearlyBookGoal(id: string, goal: number | null): void {
 		.prepare("UPDATE users SET yearly_book_goal = ?, updated_at = datetime('now') WHERE id = ?")
 		.run(goal, id);
 }
+
+export function setUserAppearance(id: string, theme: string, colorMode: string): void {
+	getDb()
+		.prepare(
+			"UPDATE users SET theme = ?, color_mode = ?, updated_at = datetime('now') WHERE id = ?"
+		)
+		.run(theme, colorMode, id);
+}

@@ -1,5 +1,15 @@
 @import 'tailwindcss';
+@import './themes.css';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Color changes (hover, theme switch) apply instantly for people who ask for less motion;
+   the loading spinner keeps spinning because it carries state. */
+@media (prefers-reduced-motion: reduce) {
+	.transition-colors,
+	.transition-all {
+		transition: none;
+	}
+}

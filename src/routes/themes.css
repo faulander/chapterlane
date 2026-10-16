@@ -1,0 +1,62 @@
+/*
+ * Non-default themes redefine the Tailwind color variables from five tokens
+ * (--t-light, --t-dark, --t-surface, --t-accent, --t-on-accent), which $lib/themes.ts
+ * emits per theme and mode. gray-* ramps from --t-light (50) to --t-dark (950);
+ * indigo-* is the accent scale. Components keep using the plain utilities.
+ */
+/* Share of --t-dark in each gray step. Light mode steepens at 500+ so muted text stays at
+   4.5:1; dark mode lifts 400 so muted text on cards does too. */
+html {
+	--g-100: 6%;
+	--g-200: 15%;
+	--g-300: 30%;
+	--g-400: 56%;
+	--g-500: 77%;
+	--g-600: 84%;
+	--g-700: 89%;
+	--g-800: 93%;
+	--g-900: 96%;
+}
+
+html.dark {
+	color-scheme: dark;
+	--g-100: 6%;
+	--g-200: 13%;
+	--g-300: 22%;
+	--g-400: 34%;
+	--g-500: 48%;
+	--g-600: 62%;
+	--g-700: 76%;
+	--g-800: 88%;
+	--g-900: 95%;
+}
+
+html[data-theme]:not([data-theme='default']) {
+	--color-white: var(--t-surface);
+
+	--color-gray-50: var(--t-light);
+	--color-gray-100: color-mix(in oklab, var(--t-dark) var(--g-100), var(--t-light));
+	--color-gray-200: color-mix(in oklab, var(--t-dark) var(--g-200), var(--t-light));
+	--color-gray-300: color-mix(in oklab, var(--t-dark) var(--g-300), var(--t-light));
+	--color-gray-400: color-mix(in oklab, var(--t-dark) var(--g-400), var(--t-light));
+	--color-gray-500: color-mix(in oklab, var(--t-dark) var(--g-500), var(--t-light));
+	--color-gray-600: color-mix(in oklab, var(--t-dark) var(--g-600), var(--t-light));
+	--color-gray-700: color-mix(in oklab, var(--t-dark) var(--g-700), var(--t-light));
+	--color-gray-800: color-mix(in oklab, var(--t-dark) var(--g-800), var(--t-light));
+	--color-gray-900: color-mix(in oklab, var(--t-dark) var(--g-900), var(--t-light));
+	--color-gray-950: var(--t-dark);
+
+	--color-indigo-50: color-mix(in oklab, var(--t-accent) 8%, var(--t-light));
+	--color-indigo-100: color-mix(in oklab, var(--t-accent) 15%, var(--t-light));
+	--color-indigo-200: color-mix(in oklab, var(--t-accent) 28%, var(--t-light));
+	--color-indigo-300: color-mix(in oklab, var(--t-accent) 48%, var(--t-light));
+	--color-indigo-400: color-mix(in oklab, var(--t-accent) 72%, var(--t-light));
+	--color-indigo-500: var(--t-accent);
+	--color-indigo-600: color-mix(in oklab, var(--t-accent) 85%, var(--t-dark));
+	--color-indigo-700: color-mix(in oklab, var(--t-accent) 70%, var(--t-dark));
+	--color-indigo-800: color-mix(in oklab, var(--t-accent) 55%, var(--t-dark));
+	--color-indigo-900: color-mix(in oklab, var(--t-accent) 38%, var(--t-dark));
+	--color-indigo-950: color-mix(in oklab, var(--t-accent) 24%, var(--t-dark));
+
+	--color-on-accent: var(--t-on-accent);
+}

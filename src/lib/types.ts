@@ -11,6 +11,8 @@ export interface User {
 	preferred_language: string;
 	profile_visibility: Visibility;
 	yearly_book_goal: number | null;
+	theme: string;
+	color_mode: 'system' | 'light' | 'dark';
 	created_at: string;
 	updated_at: string;
 }
