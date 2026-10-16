@@ -369,11 +369,19 @@ function ChapterLane:complete()
         text = _("Mark this book completed on ChapterLane?"),
         ok_callback = function()
             NetworkMgr:runWhenConnected(function()
-                self:syncCurrent(true, true)
-                if self.completed[self.book_id] then message(_("Already marked completed on ChapterLane.")); return end
-                if #self.queue > 0 then return end -- syncCurrent already reported why
+                self:drain(true)
+                if self.completed[self.book_id] then
+                    message(_("Already marked completed on ChapterLane."))
+                    return
+                end
+                local percent = self:percent()
+                if percent and percent > self:highestQueuedPercent(self.book_id) then
+                    self:enqueue({ book_id = self.book_id, status = "active", percent = percent })
+                end
                 self:enqueue({ book_id = self.book_id, status = "completed" })
-                if self:drain(true) then message(_("Marked completed on ChapterLane.")) end
+                if self:drain(true) then
+                    message(_("Marked completed on ChapterLane."))
+                end
             end)
         end,
     })

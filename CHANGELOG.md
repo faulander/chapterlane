@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added device keys and an authenticated reading-device API for per-user library discovery and retry-safe status/percent updates
 - Added a KOReader plugin with explicit book linking, offline retry-safe progress sync, manual completion, and a usage/implementation guide
 - KOReader can import the HTTPS address and device key from a two-line file transferred over USB
+- KOReader completion now queues the final progress update and completion together, so a failed request cannot silently prevent the completion status from being retried
 - KOReader book linking now starts with an editable fuzzy title filter, ranked matches, and a Show all books option
 - Server logs are stored in the database (newest 5,000 kept, unhandled request errors included) and can be browsed by the instance owner under Settings → Server logs, with level, module, and text filters
 - Top Authors on the statistics page can be switched between read books, want-to-read books, and all books, and states which one is counted
