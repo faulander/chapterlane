@@ -81,18 +81,18 @@
 		<div class="flex gap-2">
 			<a
 				href={href(`/stats?year=${data.year - 1}&authors=${data.authorScope}`)}
-				class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
+				class="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
 			>
 				{data.year - 1}
 			</a>
 			<span
-				class="rounded-lg bg-indigo-100 px-3 py-1.5 text-sm font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+				class="inline-flex min-h-[44px] items-center rounded-lg bg-indigo-100 px-4 py-1.5 text-sm font-medium text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
 			>
 				{data.year}
 			</span>
 			<a
 				href={href(`/stats?year=${data.year + 1}&authors=${data.authorScope}`)}
-				class="rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
+				class="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 py-1.5 text-sm dark:border-gray-600 dark:text-gray-300"
 			>
 				{data.year + 1}
 			</a>
@@ -145,7 +145,7 @@
 					<a
 						href={href(`/stats?year=${data.year}&authors=${scope.value}`)}
 						aria-current={scope.value === data.authorScope ? 'true' : undefined}
-						class="min-h-[36px] rounded-lg border px-3 py-1.5 text-sm {scope.value ===
+						class="inline-flex min-h-[44px] items-center rounded-lg border px-3 py-1.5 text-sm {scope.value ===
 						data.authorScope
 							? 'border-indigo-300 bg-indigo-100 font-medium text-indigo-700 dark:border-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
 							: 'border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300'}"

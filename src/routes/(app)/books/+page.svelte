@@ -61,7 +61,7 @@
 	<div class="flex flex-wrap items-center justify-between gap-2">
 		<h1 class="text-2xl font-bold text-gray-900 dark:text-white">{m.my_books_title()}</h1>
 		<a href={href('/books/search')}>
-			<Button size="sm"><Plus size="16" class="mr-1" /> {m.book_add_heading()}</Button>
+			<Button size="md"><Plus size="16" class="mr-1" /> {m.book_add_heading()}</Button>
 		</a>
 	</div>
 
@@ -92,7 +92,7 @@
 		<select
 			value={data.currentSort}
 			onchange={onSortChange}
-			class="min-h-[36px] rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+			class="min-h-[44px] rounded-lg border border-gray-300 bg-white py-1.5 pr-9 pl-3 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
 		>
 			{#each sortOptions as opt (opt.key)}
 				<option value={opt.key}>{opt.label}</option>
@@ -109,7 +109,7 @@
 					q: data.search || undefined,
 					sort: data.currentSort
 				})}
-				class="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors
+				class="inline-flex min-h-[44px] shrink-0 items-center rounded-full px-4 py-1.5 text-sm font-medium transition-colors
 					{data.currentFilter === tab.key
 					? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
 					: 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800'}"

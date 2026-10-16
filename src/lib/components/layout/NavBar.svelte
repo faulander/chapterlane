@@ -14,7 +14,7 @@
 	<div class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
 		<a
 			href={href('/dashboard')}
-			class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white"
+			class="flex min-h-[44px] min-w-[44px] items-center gap-2 text-lg font-bold text-gray-900 dark:text-white"
 		>
 			<BookOpen size="24" />
 			<span class="hidden sm:inline">{m.app_name()}</span>

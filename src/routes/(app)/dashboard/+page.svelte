@@ -57,7 +57,7 @@
 			</h2>
 			<a
 				href={href('/books?status=active')}
-				class="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+				class="inline-flex min-h-[44px] items-center text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
 			>
 				{m.my_books_title()}
 			</a>
